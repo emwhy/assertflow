@@ -4,7 +4,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.emwhyware.assertion.bool.BooleanAssertionGroup;
 import org.emwhyware.assertion.bool.BooleanTo;
-import org.emwhyware.assertion.bool.BooleanToOrNot;
 import org.emwhyware.assertion.collection.CollectionAssertionGroup;
 import org.emwhyware.assertion.collection.CollectionTo;
 import org.emwhyware.assertion.date.DateAssertionGroup;

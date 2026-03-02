@@ -5,9 +5,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.emwhyware.assertion.AssertionGroup;
 import org.emwhyware.assertion.Conditions;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 public final class CollectionBeConditions extends Conditions {
     private final Collection<?> actualCollection;

@@ -4,10 +4,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.emwhyware.assertion.AssertionGroup;
 import org.emwhyware.assertion.Connector;
-import org.emwhyware.assertion.date.DateBeConditions;
-import org.emwhyware.assertion.date.DateNot;
-
-import java.time.LocalDate;
 
 public class BooleanNotBe extends Connector {
     public final BooleanBeConditions be;

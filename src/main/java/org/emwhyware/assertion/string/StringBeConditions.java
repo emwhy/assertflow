@@ -8,7 +8,6 @@ import org.emwhyware.assertion.Conditions;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 public final class StringBeConditions extends Conditions {
     private final String actual;
