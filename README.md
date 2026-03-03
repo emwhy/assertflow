@@ -32,8 +32,8 @@ As you can see in these examples, it is written in very fluent manner. It's easy
     expect("Test 8", testText).to.caseInsensitively.contain("ES");
     expect("Test 9", testText).to.match("\\w+");
     expect("Test 10", testText).to.not.match("\\d+");
-    expect("Test 11", testText).to.be.oneOf(testText, "test2", "test3");
-    expect("Test 22", testText).to.caseInsensitively.be.oneOf(testText, "TEST2",  "TEST3");
+    expect("Test 11", testText).to.be.oneOf("test1", "test2", "test3");
+    expect("Test 22", testText).to.caseInsensitively.be.oneOf("TEST1", "TEST2", "TEST3");
 
     // Numbers.
     expect("Test 1", i).to.be(10);
@@ -166,9 +166,11 @@ dependencies {
 
 ## Implementing emw-Assertion
 
-To get access to all of "expect" and "assertionGroup" methods, implement **Assertor** interface to your test class.
+To get access to all emw-Assertion methods that include "expect" and "assertionGroup" methods, implement **Assertor** interface to your test class.
 
-Once this is done, all methods become available in any method within the class.
+If you want all of your test classes to have access to emw-Assertion methods, create a base test class that implements **Assertor** interface.
+
+Once the interface is implemented, all methods become available in any method within the test class.
 
 ```java
 public class AssertionTest implements Assertor {
@@ -179,4 +181,4 @@ public class AssertionTest implements Assertor {
 
 ## Finally...
 
-If you are working on UI test automation project, please also take a look at [Selentic Framework](https://github.com/emwhy/selentic-framework).
+If you are working on UI test automation projects, please also take a look at [Selentic Framework](https://github.com/emwhy/selentic-framework).
