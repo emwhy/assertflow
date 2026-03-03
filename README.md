@@ -150,6 +150,22 @@ org.emw.assertion.exception.AssertionGroupError: 3 errors in group
 	at org.testng.internal.invokers.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:141)
 	at org.testng.internal.invokers.TestInvoker.invokeMethod(TestInvoker.java:687)
 ```
+### Grouping Different Assertion Solutions
+
+If you have other favorite assertion solutions, you can also use that in conjunction with emw-Assertions's assertion grouping.
+
+```java
+     assertionGroup(g -> {
+         g.expect("test").to.be("test1");
+         g.expect("test").to.be("test2");
+         g.expect(1).to.be(1);
+         g.expect(1).to.be(0);
+         
+         // Using TestNG's Assert class in grouping.
+         g.assertWith(() -> Assert.assertEquals(1, 0));
+         g.assertWith(() -> Assert.assertEquals(testText, "test"));
+     }); 
+```
 
 ## Setting Up emw-Assertion
 
