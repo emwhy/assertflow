@@ -144,8 +144,10 @@ public final class AssertionGroup {
         private final NumberAssertionGroup number;
         private final DateAssertionGroup date;
         private final BooleanAssertionGroup bool;
+        private final AssertionGroup group;
 
         private Group(AssertionGroup group) {
+            this.group = group;
             this.string = new StringAssertionGroup(group);
             this.collection = new CollectionAssertionGroup(group);
             this.number = new NumberAssertionGroup(group);
@@ -250,6 +252,18 @@ public final class AssertionGroup {
             return bool.expect(labelForActual, actual);
         }
 
+        public void assertWith(AnyAssertionAction action) {
+            try {
+                action.assertWith();
+            } catch (Throwable ex) {
+                group.throwables.add(ex);
+            }
+        }
+
+    }
+
+    public interface AnyAssertionAction {
+        void assertWith();
     }
 
     public interface GroupAction {
