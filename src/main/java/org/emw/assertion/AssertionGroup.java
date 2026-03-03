@@ -11,6 +11,9 @@ import org.emw.assertion.collection.CollectionTo;
 import org.emw.assertion.date.DateAssertionGroup;
 import org.emw.assertion.date.DateAssertor;
 import org.emw.assertion.date.DateTo;
+import org.emw.assertion.datetime.DateTimeAssertionGroup;
+import org.emw.assertion.datetime.DateTimeAssertor;
+import org.emw.assertion.datetime.DateTimeTo;
 import org.emw.assertion.exception.AssertionGroupError;
 import org.emw.assertion.number.NumberAssertionGroup;
 import org.emw.assertion.number.NumberAssertor;
@@ -21,6 +24,7 @@ import org.emw.assertion.string.StringTo;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -111,6 +115,7 @@ import java.util.List;
  * @see CollectionAssertor
  * @see DateAssertor
  * @see NumberAssertor
+ * @see DateTimeAssertor
  */
 public final class AssertionGroup {
     private final List<Throwable> throwables = new ArrayList<>();
@@ -144,6 +149,7 @@ public final class AssertionGroup {
         private final NumberAssertionGroup number;
         private final DateAssertionGroup date;
         private final BooleanAssertionGroup bool;
+        private final DateTimeAssertionGroup datetime;
         private final AssertionGroup group;
 
         private Group(AssertionGroup group) {
@@ -153,6 +159,8 @@ public final class AssertionGroup {
             this.number = new NumberAssertionGroup(group);
             this.date = new DateAssertionGroup(group);
             this.bool = new BooleanAssertionGroup(group);
+            this.datetime = new DateTimeAssertionGroup(group);
+            this
         }
 
         public StringTo expect(@Nullable String actual) {
@@ -250,6 +258,14 @@ public final class AssertionGroup {
 
         public BooleanTo expect(@NonNull String labelForActual, @Nullable Boolean actual) {
             return bool.expect(labelForActual, actual);
+        }
+
+        public DateTimeTo expect(@Nullable LocalDateTime actual) {
+            return expect("", actual);
+        }
+
+        public DateTimeTo expect(@NonNull String labelForActual, @Nullable LocalDateTime actual) {
+            return datetime.expect(labelForActual, actual);
         }
 
         public void assertWith(AnyAssertionAction action) {
