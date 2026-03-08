@@ -92,6 +92,8 @@ public class JsonObjectBeAssertionMethods extends AssertionMethods {
         private String actualString() {
             if (actual == null) {
                 throw new AssertionError("Node is null.");
+            } else if (!(obj instanceof String)) {
+                throw new AssertionError("Node is not a string.");
             } else {
                 return ((String) this.actual).trim();
             }
@@ -223,6 +225,8 @@ public class JsonObjectBeAssertionMethods extends AssertionMethods {
         private Number actualNumber() {
             if (actual == null) {
                 throw new AssertionError("Node is null.");
+            } else if (!(actual instanceof Number)) {
+                throw new AssertionError("Node is not a number.");
             } else {
                 return (Number) actual;
             }

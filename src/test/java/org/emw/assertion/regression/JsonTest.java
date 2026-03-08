@@ -122,6 +122,7 @@ public class JsonTest implements JsonAssertor {
             json.node("/university_system/founded_year").to.exists();
             json.node("/university_system/founded_year").to.not.be.stringType();
             json.node("/university_system/end_year").to.be.nullValue();
+            json.node("/university_system").to.not.be.stringType();
             json.node("/university_system/name").to.not.be.string.empty();
             json.node("/university_system/name").to.be.string.startWith("Global");
             json.node("/university_system/name").to.be.string.endWith("Institute");
