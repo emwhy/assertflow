@@ -1,21 +1,4 @@
 package org.emw.assertion.json;
-
-/*
-
-assertJson(json).expect(json -> {
-    json.to.contain(data);
-    json.to.be("");
-    json.node("").to.contain(data);
-    json.node("").to.excludingNode("").caseInsensitively.not.contain(data);
-    json.nodes("").to.inAnyOrder.have(data);
-    json.nodes("").at(0).node("").to.inAnyOrder.have(data);
-    json.nodes("").iterate((node, i) -> {
-        node.to
-    });
-});
-
- */
-
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,12 +7,12 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class JsonNode {
-    public final JsonObjectAllAssertionMethods to;
+    public final JsonNodeAllAssertionMethods to;
     protected final @Nullable Object nodeObject;
 
     protected JsonNode(@Nullable Object nodeObject) {
         this.nodeObject = nodeObject;
-        this.to = new JsonObjectAllAssertionMethods(nodeObject, false, false, List.of());
+        this.to = new JsonNodeAllAssertionMethods(nodeObject, false, false, List.of());
     }
 
     public JsonNode node(String jsonPointer) {

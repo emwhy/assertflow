@@ -7,7 +7,7 @@ import org.emw.assertion.bool.BooleanAssertor;
 import org.emw.assertion.number.NumberAssertor;
 import org.emw.assertion.string.StringAssertor;
 
-public class JsonObjectBeAssertionMethods extends AssertionMethods {
+public class JsonNodeBeAssertionMethods extends AssertionMethods {
     private final @Nullable Object obj;
     private final boolean negated;
     private final boolean ignoreCase;
@@ -15,7 +15,7 @@ public class JsonObjectBeAssertionMethods extends AssertionMethods {
     public final JsonNumberAssertions number;
     public final JsonBooleanAssertions bool;
 
-    protected JsonObjectBeAssertionMethods(@Nullable Object obj, boolean negated, boolean ignoreCase) {
+    protected JsonNodeBeAssertionMethods(@Nullable Object obj, boolean negated, boolean ignoreCase) {
         super(null, "", negated, ignoreCase);
         this.obj = obj;
         this.negated = negated;

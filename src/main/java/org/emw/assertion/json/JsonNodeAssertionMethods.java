@@ -3,25 +3,26 @@ package org.emw.assertion.json;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.emw.assertion.AssertionMethods;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class JsonObjectAssertionMethods extends AssertionMethods {
-    public final JsonObjectBeAssertionMethods be;
+public class JsonNodeAssertionMethods extends AssertionMethods {
+    public final JsonNodeBeAssertionMethods be;
     private final @Nullable Object obj;
     private final boolean negated;
     private final boolean ignoreCase;
     protected final @NonNull List<String> excludedNodes = new ArrayList<>();
 
-    protected JsonObjectAssertionMethods(@Nullable Object obj, boolean negated, boolean ignoreCase, @NonNull List<String> excludedNodes) {
+    protected JsonNodeAssertionMethods(@Nullable Object obj, boolean negated, boolean ignoreCase, @NonNull List<String> excludedNodes) {
         super(null, "", negated, ignoreCase);
         this.obj = obj;
         this.negated = negated;
         this.ignoreCase = ignoreCase;
         this.excludedNodes.addAll(excludedNodes);
-        this.be = new JsonObjectBeAssertionMethods(obj, negated, ignoreCase);
+        this.be = new JsonNodeBeAssertionMethods(obj, negated, ignoreCase);
     }
 
     public void be(@NonNull Object expected) {
@@ -69,17 +70,32 @@ public class JsonObjectAssertionMethods extends AssertionMethods {
     }
 
     public void containJson(@NonNull String containedJsonText) {
-        containJson(new JSONObject(containedJsonText));
+        if (JsonHelper.isJson(containedJsonText)) {
+            containJson(new JSONObject(containedJsonText));
+        } else if (JsonHelper.isJsonArray(containedJsonText)) {
+            containJson(new JSONArray(containedJsonText));
+        } else {
+            throw new AssertionError("Not Json.");
+        }
     }
 
     public void containJson(@NonNull JSONObject containedJson) {
         assertCondition(() -> {
             if (this.obj == null) {
                 throw new AssertionError("Node does not exist.");
-            } else if (JsonHelper.containsJason((JSONObject) this.obj, containedJson, this.excludedNodes) == negated) {
+            } else if (JsonHelper.containsJson(this.obj, containedJson, this.excludedNodes, this.ignoreCase) == negated) {
                 throw new AssertionError("Expected the actual Json data to contain the expected Json data.");
             }
         });
     }
 
+    public void containJson(@NonNull JSONArray containedJson) {
+        assertCondition(() -> {
+            if (this.obj == null) {
+                throw new AssertionError("Node does not exist.");
+            } else if (JsonHelper.containsJson(this.obj, containedJson, this.excludedNodes, this.ignoreCase) == negated) {
+                throw new AssertionError("Expected the actual Json data to contain the expected Json data.");
+            }
+        });
+    }
 }

@@ -1,17 +1,24 @@
 package org.emw.assertion.json;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.json.JSONArray;
 
-public class JsonArrayBeAssertionMethods {
-    private final JSONArray jsonArray;
+import java.util.List;
+
+public class JsonNodesBeAssertionMethods {
+    private final @Nullable JSONArray jsonArray;
     private final boolean negated;
     private final boolean ignoreCase;
+    private final boolean inAnyOrder;
+    private final @NonNull List<String> excludedNodes;
 
-    protected JsonArrayBeAssertionMethods(@NonNull JSONArray jsonArray, boolean negated, boolean ignoreCase) {
+    protected JsonNodesBeAssertionMethods(@Nullable JSONArray jsonArray, boolean negated, boolean ignoreCase, boolean inAnyOrder, @NonNull List<String> excludedNodes) {
         this.jsonArray = jsonArray;
         this.negated = negated;
         this.ignoreCase = ignoreCase;
+        this.inAnyOrder = inAnyOrder;
+        this.excludedNodes = excludedNodes;
     }
 
 //    public final StringBeAssertionMethods be;

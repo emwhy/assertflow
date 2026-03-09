@@ -9,7 +9,11 @@ import java.util.*;
 
 final class JsonHelper {
     static boolean isJson(@NonNull String text) {
-        return text.trim().startsWith("{") || text.trim().startsWith("[");
+        return text.trim().startsWith("{");
+    }
+
+    static boolean isJsonArray(@NonNull String text) {
+        return text.trim().startsWith("[");
     }
 
     static JsonType jsonType(@NonNull String jsonText) {
@@ -22,17 +26,13 @@ final class JsonHelper {
         }
     }
 
-    static boolean containsJason(@NonNull JSONObject jsonObject, @NonNull String expectedJsonText, List<String> excludedNodes) {
-        return containsJason(jsonObject, new JSONObject(expectedJsonText), excludedNodes);
-    }
-
-    static boolean containsJason(@NonNull JSONObject jsonObject, @NonNull JSONObject expectedJsonObject, List<String> excludedNodes) {
-        final Map<String, Object> actual = getPointerValueMap(removeByJsonPointer(jsonObject, excludedNodes));
-        final JSONObject containedJson = removeByJsonPointer(expectedJsonObject, excludedNodes);
+    static boolean containsJson(@NonNull Object json, @NonNull Object expectedJson, List<String> excludedNodes, boolean ignoreCase) {
+        final Map<String, Object> actual = getPointerValueMap(removeByJsonPointer(json, excludedNodes));
+        final Object containedJson = removeByJsonPointer(expectedJson, excludedNodes);
 
         for (Object value : actual.values()) {
-            if (value instanceof JSONObject) {
-                if (jsonMatched((JSONObject) value, containedJson, List.of(), false).isEmpty()) {
+            if (value instanceof JSONObject || value instanceof JSONArray) {
+                if (jsonMatched(value, containedJson, List.of(), ignoreCase).isEmpty()) {
                     return true;
                 }
             }
@@ -40,56 +40,64 @@ final class JsonHelper {
         return false;
     }
 
-    static String jsonMatched(@NonNull JSONObject jsonObject, @NonNull String expectedJsonText, List<String> excludedNodes, boolean ignoreCase) {
-        return jsonMatched(jsonObject, new JSONObject(expectedJsonText), excludedNodes, ignoreCase);
-    }
+    static String jsonMatched(@NonNull Object json, @NonNull Object expectedJson, List<String> excludedNodes, boolean ignoreCase) {
+        if ((json instanceof JSONObject || json instanceof JSONArray) && (expectedJson instanceof JSONObject || expectedJson instanceof JSONArray)) {
+            final Map<String, Object> actual = getPointerValueMap(removeByJsonPointer(json, excludedNodes));
+            final Map<String, Object> expected = getPointerValueMap(removeByJsonPointer(expectedJson, excludedNodes));
 
-    static String jsonMatched(@NonNull JSONObject jsonObject, @NonNull JSONObject expectedJsonObject, List<String> excludedNodes, boolean ignoreCase) {
-        final Map<String, Object> actual = getPointerValueMap(removeByJsonPointer(jsonObject, excludedNodes));
-        final Map<String, Object> expected = getPointerValueMap(removeByJsonPointer(expectedJsonObject, excludedNodes));
+            validateExcludedJsonPointerFragments(json, excludedNodes);
 
-        validateExcludedJsonPointerFragments(jsonObject, excludedNodes);
+            if (actual.size() > expected.size()) {
+                return "Expected Json size is smaller than the actual Json size.";
+            } else if (actual.size() < expected.size()) {
+                return "Expected Json size is larger than the actual Json size.";
+            } else {
+                for (Map.Entry<String, Object> entry : actual.entrySet()) {
+                    Object expectedValue = expected.get(entry.getKey());
 
-        if (actual.size() > expected.size()) {
-            return "Expected Json size is smaller than the actual Json size.";
-        } else if (actual.size() < expected.size()) {
-            return "Expected Json size is larger than the actual Json size.";
-        } else {
-            for (Map.Entry<String, Object> entry : actual.entrySet()) {
-                Object expectedValue = expected.get(entry.getKey());
-
-                if (!(entry.getValue() instanceof JSONObject) && !(entry.getValue() instanceof JSONArray)) {
-                    if (expectedValue == null) {
-                        return "Expected name is missing: " + entry.getKey();
-                    } else if (entry.getValue() instanceof String && ignoreCase) {
-                        if (!expectedValue.toString().equalsIgnoreCase(entry.getValue().toString())) {
-                            return "Expected value at " + entry.getKey() + " does not case-insensitively match actual value. actual: " + entry.getValue() + ", expected: " + expectedValue;
+                    if (!(entry.getValue() instanceof JSONObject) && !(entry.getValue() instanceof JSONArray)) {
+                        if (expectedValue == null) {
+                            return "Expected name is missing: " + entry.getKey();
+                        } else if (entry.getValue() instanceof String && ignoreCase) {
+                            if (!expectedValue.toString().equalsIgnoreCase(entry.getValue().toString())) {
+                                return "Expected value at '" + entry.getKey() + "' does not case-insensitively match actual value. actual: " + entry.getValue() + ", expected: " + expectedValue;
+                            }
+                        } else if (!entry.getValue().equals(expectedValue)) {
+                            return "Expected value at '" + entry.getKey() + "' does not match actual value. actual: " + entry.getValue() + ", expected: " + expectedValue;
                         }
-                    } else if (!entry.getValue().equals(expectedValue)) {
-                        return "Expected value at " + entry.getKey() + " does not match actual value. actual: " + entry.getValue() + ", expected: " + expectedValue;
                     }
                 }
             }
-        }
-        return "";
-    }
-
-    private static void validateExcludedJsonPointerFragments(@NonNull JSONObject jsonObject, @NonNull List<String> excludeJsonPointerFragments) {
-        final Map<String, Object> map = getPointerValueMap(jsonObject);
-
-        for (String excludedJsonPointerFragment : excludeJsonPointerFragments) {
-            if (map.keySet().stream().noneMatch(key -> key.contains(excludedJsonPointerFragment))) {
-                throw new AssertionError("Cannot find specified 'excluding' Json pointer node in asserted Json: " + excludedJsonPointerFragment);
-            }
-        }
-    }
-
-    private static JSONObject removeByJsonPointer(@NonNull JSONObject jsonObject, @NonNull List<String> excludeJsonPointerFragments) {
-        if (excludeJsonPointerFragments.isEmpty()) {
-            // Return a deep copy even if no fragments are provided to ensure a new instance
-            return new JSONObject(jsonObject.toString());
+            return "";
         } else {
-            return (JSONObject) removeByJsonPointerRecursively(jsonObject, "", excludeJsonPointerFragments);
+            throw new AssertionError("Invalid parameter type.");
+        }
+    }
+
+    private static void validateExcludedJsonPointerFragments(@NonNull Object obj, @NonNull List<String> excludeJsonPointerFragments) {
+        if (obj instanceof JSONObject || obj instanceof JSONArray) {
+            final Map<String, Object> map = getPointerValueMap(obj);
+
+            for (String excludedJsonPointerFragment : excludeJsonPointerFragments) {
+                if (map.keySet().stream().noneMatch(key -> key.contains(excludedJsonPointerFragment))) {
+                    throw new AssertionError("Cannot find specified 'excluding' Json pointer node in asserted Json: " + excludedJsonPointerFragment);
+                }
+            }
+        } else {
+            throw new AssertionError("Invalid parameter type.");
+        }
+    }
+
+    private static Object removeByJsonPointer(@NonNull Object obj, @NonNull List<String> excludeJsonPointerFragments) {
+        if (obj instanceof JSONObject || obj instanceof JSONArray) {
+            if (excludeJsonPointerFragments.isEmpty()) {
+                // Return a deep copy even if no fragments are provided to ensure a new instance
+                return obj instanceof JSONObject ? new JSONObject(obj.toString()) : new JSONArray(obj.toString());
+            } else {
+                return removeByJsonPointerRecursively(obj, "", excludeJsonPointerFragments);
+            }
+        } else {
+            throw new AssertionError("Invalid parameter type.");
         }
     }
 
@@ -148,17 +156,10 @@ final class JsonHelper {
         return results;
     }
 
-    static Map<String, Object> getPointerValueMap(JSONObject jsonObject) {
+    static Map<String, Object> getPointerValueMap(@NonNull Object obj) {
         final Map<String, Object> results = new TreeMap<>();
 
-        collectPointers(jsonObject, "", results);
-        return results;
-    }
-
-    static Map<String, Object> getPointerValueMap(JSONArray jsonArray) {
-        final Map<String, Object> results = new TreeMap<>();
-
-        collectPointers(jsonArray, "", results);
+        collectPointers(obj, "", results);
         return results;
     }
 

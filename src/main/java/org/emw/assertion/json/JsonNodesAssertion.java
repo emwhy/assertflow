@@ -2,10 +2,10 @@ package org.emw.assertion.json;
 
 import org.json.JSONArray;
 
-public class JsonArrayAssertion {
+public class JsonNodesAssertion {
     private final String json;
 
-    protected JsonArrayAssertion(String json) {
+    protected JsonNodesAssertion(String json) {
         this.json = json;
     }
 

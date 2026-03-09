@@ -1,19 +1,21 @@
 package org.emw.assertion.json;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.json.JSONArray;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class JsonNodes implements Iterable<JsonNode> {
-    public final JsonArrayAssertionMethods to;
-    protected final JSONArray jsonArray;
+    public final JsonNodesAllAssertionMethods to;
+    protected final @Nullable JSONArray jsonArray;
 
-    protected JsonNodes(JSONArray jsonArray) {
+    protected JsonNodes(@Nullable JSONArray jsonArray) {
         this.jsonArray = jsonArray;
-        this.to = new JsonArrayAssertionMethods(jsonArray, false, false);
+        this.to = new JsonNodesAllAssertionMethods(jsonArray, false, false, false, List.of());
     }
 
     public JsonNode get(int index) {
@@ -21,11 +23,11 @@ public class JsonNodes implements Iterable<JsonNode> {
     }
 
     public JsonNode first() {
-        return this.get(0);
+        return this.stream().toList().getFirst();
     }
 
     public JsonNode last() {
-        return this.get(this.jsonArray.length() - 1);
+        return this.stream().toList().getLast();
     }
 
     @Override
@@ -34,6 +36,10 @@ public class JsonNodes implements Iterable<JsonNode> {
     }
 
     public Stream<JsonNode> stream() {
-        return StreamSupport.stream(jsonArray.spliterator(), false).map(JsonNode::new);
+        if (this.jsonArray == null) {
+            return Stream.empty();
+        } else {
+            return StreamSupport.stream(jsonArray.spliterator(), false).map(JsonNode::new);
+        }
     }
 }

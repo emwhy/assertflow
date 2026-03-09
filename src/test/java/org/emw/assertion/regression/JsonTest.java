@@ -15,6 +15,24 @@ public class JsonTest implements JsonAssertor {
         });
     }
 
+
+/*
+
+assertJson(json).expect(json -> {
+    json.to.contain(data);
+    json.to.be("");
+    json.node("").to.contain(data);
+    json.node("").to.excludingNode("").caseInsensitively.not.contain(data);
+    json.nodes("").to.inAnyOrder.have(data);
+    json.nodes("").at(0).node("").to.inAnyOrder.have(data);
+    json.nodes("").iterate((node, i) -> {
+        node.to
+    });
+});
+
+ */
+
+
     @Test
     public void testJson() {
         final String testJson = """
@@ -178,6 +196,121 @@ public class JsonTest implements JsonAssertor {
         for (Map.Entry<String, Object> entry : getPointerValueMap(testJson).entrySet()) {
             System.out.println((entry.getKey() + ": " + entry.getValue()));
         }
+    }
+
+    @Test
+    public void testJsonArray() {
+        final String testJson = """
+                  [
+                    {
+                      "id": "ST-001",
+                      "name": "Alice Smith",
+                      "rooms": ["room1-1", "room1-2", "room1-3"],
+                      "numbers": [0.4, 4, 8],
+                      "grades": [
+                        { "exam": "Midterm", "score": 88 },
+                        { "exam": "Final", "score": 92 }
+                      ]
+                    },
+                    {
+                      "id": "ST-002",
+                      "name": "Bob Johnson",
+                      "rooms": ["room2-1", "room2-2", "room2-3"],
+                      "numbers": [4, 48, .8],
+                      "grades": [
+                        { "exam": "Midterm", "score": 75 },
+                        { "exam": "Final", "score": 81 }
+                      ]
+                    }
+                  ]
+                """;
+        assertJsonArray(testJson).expect(jsonNodes -> {
+            jsonNodes.first().node("/id").to.be.string.startWith("ST-001");
+            jsonNodes.last().node("/id").to.be.string.startWith("ST-002");
+            jsonNodes.last().nodes("/grades").first().node("/score").to.be.number.lessThan(88);
+            jsonNodes.to.be(testJson);
+            jsonNodes.to.not.be("['test']");
+            jsonNodes.to.containJson("""
+                [
+                    { "exam": "Midterm", "score": 75 },
+                    { "exam": "Final", "score": 81 }
+                ]
+                """);
+            jsonNodes.to.not.containJson("""
+                [
+                    { "exam": "Midterm", "score": 750 },
+                    { "exam": "Final", "score": 81 }
+                ]
+                """);
+            jsonNodes.to.caseInsensitively.containJson("""
+                [
+                    { "exam": "midterm", "score": 75 },
+                    { "exam": "final", "score": 81 }
+                ]
+                """);
+            jsonNodes.to.excluding("/rooms").excluding("/numbers").allMatch("""
+                    {
+                      "id": "ST-001",
+                      "name": "Alice Smith",
+                      "grades": [
+                        { "exam": "Midterm", "score": 88 },
+                        { "exam": "Final", "score": 92 }
+                      ]
+                    }
+                    """, """
+                    {
+                      "id": "ST-002",
+                      "name": "Bob Johnson",
+                      "grades": [
+                        { "exam": "Midterm", "score": 75 },
+                        { "exam": "Final", "score": 81 }
+                      ]
+                    }
+
+                    """);
+            jsonNodes.first().nodes("/rooms").to.allMatch("room1-1", "room1-2", "room1-3");
+            jsonNodes.first().nodes("/rooms").to.caseInsensitively.allMatch("ROOM1-1", "ROOM1-2", "ROOM1-3");
+            jsonNodes.first().nodes("/rooms").to.inAnyOrder.allMatch("room1-2", "room1-3", "room1-1");
+            jsonNodes.first().nodes("/numbers").to.allMatch(.4, 4, 8);
+            jsonNodes.to.inAnyOrder.excluding("/rooms").excluding("/numbers").allMatch("""
+                    {
+                      "id": "ST-002",
+                      "name": "Bob Johnson",
+                      "grades": [
+                        { "exam": "Midterm", "score": 75 },
+                        { "exam": "Final", "score": 81 }
+                      ]
+                    }
+                    """, """
+                    {
+                      "id": "ST-001",
+                      "name": "Alice Smith",
+                      "grades": [
+                        { "exam": "Midterm", "score": 88 },
+                        { "exam": "Final", "score": 92 }
+                      ]
+                    }
+                    """);
+            jsonNodes.to.excluding("/rooms").excluding("/numbers").not.allMatch("""
+                    {
+                      "id": "ST-002",
+                      "name": "Bob Johnson",
+                      "grades": [
+                        { "exam": "Midterm", "score": 75 },
+                        { "exam": "Final", "score": 81 }
+                      ]
+                    }
+                    """, """
+                    {
+                      "id": "ST-001",
+                      "name": "Alice Smith",
+                      "grades": [
+                        { "exam": "Midterm", "score": 88 },
+                        { "exam": "Final", "score": 92 }
+                      ]
+                    }
+                    """);
+        });
     }
 
     public static Map<String, Object> getPointerValueMap(String jsonText) {

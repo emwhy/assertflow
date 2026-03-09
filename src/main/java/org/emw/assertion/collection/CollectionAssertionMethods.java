@@ -24,14 +24,14 @@ public class CollectionAssertionMethods extends AssertionMethods {
         this.helper = new CollectionAssertorHelper(labelForActual, actual, negated, ignoreCase);
     }
 
-    public void be(Object... expected) {
-        this.be(Arrays.asList(expected));
+    public void allMatch(Object... expected) {
+        this.allMatch(Arrays.asList(expected));
     }
 
-    public void be(Collection<?> expectedCollection) {
+    public void allMatch(Collection<?> expectedCollection) {
         if (this.anyOrder) {
             assertCondition(() -> {
-                String message = helper.assertionErrorMessage("to be same (in any order) as " + helper.join(expectedCollection));
+                String message = helper.assertionErrorMessage("to all match (in any order) as " + helper.join(expectedCollection));
                 if (actualCollection == null) {
                     throw new AssertionError(message);
                 } else {
@@ -57,7 +57,7 @@ public class CollectionAssertionMethods extends AssertionMethods {
             });
         } else {
             assertCondition(() -> {
-                String message = helper.assertionErrorMessage("to be same as " + helper.join(expectedCollection));
+                String message = helper.assertionErrorMessage("to to all match " + helper.join(expectedCollection));
                 if (actualCollection == null) {
                     throw new AssertionError(message);
                 } else {
