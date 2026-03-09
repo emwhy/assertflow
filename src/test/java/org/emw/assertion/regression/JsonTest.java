@@ -5,26 +5,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.annotations.Test;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 public class JsonTest implements JsonAssertor {
-/*
-
-assertJson(json).expect(json -> {
-    json.to.contain(data);
-    json.to.be("");
-    json.node("").to.contain(data);
-    json.node("").to.excludingNode("").caseInsensitively.not.contain(data);
-    json.nodes("").to.inAnyOrder.have(data);
-    json.nodes("").at(0).node("").to.inAnyOrder.have(data);
-    json.nodes("").iterate((node, i) -> {
-        node.to
-    });
-});
-
- */
-
-
     @Test
     public void testJson() {
         final String testJson = """
@@ -182,12 +168,6 @@ assertJson(json).expect(json -> {
                           }
                     """);
         });
-
-//        System.out.println(getJsonObjectPointer("", jo));
-//        generatePointers(jo, "");
-        for (Map.Entry<String, Object> entry : getPointerValueMap(testJson).entrySet()) {
-            System.out.println((entry.getKey() + ": " + entry.getValue()));
-        }
     }
 
     @Test
@@ -357,197 +337,201 @@ assertJson(json).expect(json -> {
         assertJsonArray("[]").expect(jsonNodes -> jsonNodes.to.be.empty());
     }
 
-    public static Map<String, Object> getPointerValueMap(String jsonText) {
-        final Map<String, Object> results = new TreeMap<>();
-        final String trimmed = jsonText.trim();
-
-        if (!trimmed.isEmpty()) {
-            final Object root = trimmed.startsWith("[") ? new JSONArray(trimmed) : new JSONObject(trimmed);
-
-            collectPointers(root, "", results);
-        }
-        return results;
-    }
-
-    private static void collectPointers(Object node, String pointer, Map<String, Object> results) {
-        final String currentPath = pointer.isEmpty() ? "/" : pointer;
-
-        // Store the current node in the map
-        results.put(currentPath, node);
-
-        if (node instanceof JSONObject obj) {
-            for (Iterator<String> keys = obj.keys(); keys.hasNext(); ) {
-                final String key = keys.next();
-                // RFC 6901 Escaping
-                final String escapedKey = key.replace("~", "~0").replace("/", "~1");
-                collectPointers(obj.get(key), pointer + "/" + escapedKey, results);
-            }
-        } else if (node instanceof JSONArray array) {
-            for (int i = 0; i < array.length(); i++) {
-                collectPointers(array.get(i), pointer + "/" + i, results);
-            }
-        }
-    }
-
-    public static List<String> getAllPointers(String jsonText) {
-        List<String> results = new ArrayList<>();
-        String trimmed = jsonText.trim();
-
-        if (trimmed.isEmpty()) return results;
-
-        Object root = trimmed.startsWith("[") ? new JSONArray(trimmed) : new JSONObject(trimmed);
-        collectPointers(root, "", results);
-
-        return results;
-    }
-
-    private static void collectPointers(Object node, String pointer, List<String> results) {
-        // Add the current path to the list
-        results.add(pointer.isEmpty() ? "/" : pointer);
-
-        if (node instanceof JSONObject obj) {
-            for (Iterator<String> keys = obj.keys(); keys.hasNext(); ) {
-                String key = keys.next();
-                String escapedKey = key.replace("~", "~0").replace("/", "~1");
-                collectPointers(obj.get(key), pointer + "/" + escapedKey, results);
-            }
-        } else if (node instanceof JSONArray array) {
-            for (int i = 0; i < array.length(); i++) {
-                collectPointers(array.get(i), pointer + "/" + i, results);
-            }
-        }
-    }
-
-    private static void generatePointers(Object node, String pointer) {
-        // Print current pointer (root is represented as /)
-        System.out.println(pointer.isEmpty() ? "/" : pointer);
-
-        if (node instanceof JSONObject obj) {
-            for (Iterator<String> keys = obj.keys(); keys.hasNext(); ) {
-                String key = keys.next();
-                // RFC 6901 Escaping: ~ -> ~0, / -> ~1
-                String escapedKey = key.replace("~", "~0").replace("/", "~1");
-                generatePointers(obj.get(key), pointer + "/" + escapedKey);
-            }
-        } else if (node instanceof JSONArray array) {
-            for (int i = 0; i < array.length(); i++) {
-                generatePointers(array.get(i), pointer + "/" + i);
-            }
-        }
-    }
-
-    private String getJsonObjectPointer(String pointerText, JSONObject jo) {
-        for (String key : jo.keySet()) {
-            Object data = jo.get(key);
-
-            if (data instanceof JSONObject) {
-                pointerText += getJsonObjectPointer(pointerText + "/" + key, (JSONObject) data);
-            } else if (data instanceof JSONArray) {
-                pointerText += getJsonArrayPointer(pointerText + "/" + key, (JSONArray) data);
-            } else {
-                pointerText += "/" + key + "/" + data.toString() + "\n";
-            }
-        }
-        return pointerText;
-    }
-
-    private String getJsonArrayPointer(String pointerText, JSONArray ja) {
-        for (int i = 0; i < ja.length(); i++) {
-            Object data = ja.get(i);
-
-            if (data instanceof JSONObject) {
-                pointerText += getJsonObjectPointer(pointerText + "/" + i, (JSONObject) data);
-            } else if (data instanceof JSONArray) {
-                pointerText += getJsonArrayPointer(pointerText + "/" + i, (JSONArray) data);
-            } else {
-                pointerText += "/" + data.toString() + "\n";
-            }
-        }
-        return pointerText;
-    }
-
-    private void parseJSON(HashMap<String, Object> map) {
-
-    }
-
-
     @Test
-    public void testJsonList() {
+    public void testJsonDate() {
         final String testJson = """
-                [
-                  {
-                    "category": "Consumer Electronics",
-                    "region": "North America",
-                    "inventory": [
-                      {
-                        "product_id": "SKU-9921",
-                        "name": "Quantum Tablet Pro",
-                        "specs": {
-                          "display": {
-                            "size": "12.9 inch",
-                            "technology": "OLED",
-                            "resolution": "2732 x 2048"
-                          },
-                          "sensors": ["LiDAR", "FaceID", "Ambient Light", "Gyroscope"]
-                        },
-                        "warehouses": [
-                          {
-                            "id": "WH-TX-01",
-                            "stock_levels": {
-                              "on_hand": 1240,
-                              "reserved": 150,
-                              "backordered": 0
-                            },
-                            "audit_history": [
-                              { "date": "2024-01-15", "action": "restock", "quantity": 500 },
-                              { "date": "2024-02-10", "action": "damage_writeoff", "quantity": 12 }
-                            ]
-                          },
-                          {
-                            "id": "WH-CA-05",
-                            "stock_levels": {
-                              "on_hand": 890,
-                              "reserved": 45,
-                              "backordered": 12
-                            }
-                          }
-                        ]
-                      },
-                      {
-                        "product_id": "SKU-4410",
-                        "name": "Sonic Buds Gen 3",
-                        "features": ["Active Noise Cancellation", "Spatial Audio", "IPX4 Rated"],
-                        "pricing_tiers": [
-                          { "type": "Retail", "price": 199.99, "currency": "USD" },
-                          { "type": "Wholesale", "price": 145.00, "min_units": 50 }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "category": "Home Automation",
-                    "region": "Europe",
-                    "inventory": [
-                      {
-                        "product_id": "SKU-1102",
-                        "name": "Smart Hub X",
-                        "connectivity": ["Zigbee 3.0", "Matter", "Thread", "Wi-Fi 6"],
-                        "support_contacts": [
-                          {
-                            "tier": "Level 1",
-                            "methods": ["Email", "Live Chat"],
-                            "availability": "24/7"
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-                
+                {
+                  "date_formats": [
+                    {
+                      "formatter": "DateTimeFormatter.BASIC_ISO_DATE",
+                      "pattern": "yyyyMMdd",
+                      "example": "20260309"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ISO_DATE",
+                      "pattern": "yyyy-MM-dd+HH:mm",
+                      "example": "2026-03-09-04:00"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ISO_OFFSET_DATE",
+                      "pattern": "yyyy-MM-dd+HH:mm",
+                      "example": "2026-03-09-04:00"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ISO_LOCAL_DATE",
+                      "pattern": "yyyy-MM-dd",
+                      "example": "2026-03-09"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ISO_ORDINAL_DATE",
+                      "pattern": "yyyy-DDD",
+                      "example": "2026-068"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ISO_WEEK_DATE",
+                      "pattern": "YYYY-w-e",
+                      "example": "2026-W11-1"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)",
+                      "pattern": "EEEE, MMMM d, yyyy",
+                      "example": "Monday, March 9, 2026"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)",
+                      "pattern": "MMMM d, yyyy",
+                      "example": "March 9, 2026"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)",
+                      "pattern": "MMM d, yyyy",
+                      "example": "Mar 9, 2026"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)",
+                      "pattern": "M/d/yy",
+                      "example": "3/9/26"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ofPattern(\\"MM/dd/yyyy\\")",
+                      "pattern": "MM/dd/yyyy",
+                      "example": "03/09/2026"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ofPattern(\\"M/d/yyyy\\")",
+                      "pattern": "M/d/yyyy",
+                      "example": "3/9/2026"
+                    }
+                  ]
+                }
                 
                 """;
-        final JSONObject jo = new JSONObject(testJson);
+        assertJson(testJson).expect(json -> {
+            json.nodes("/date_formats").stream().forEach(node -> {
+                node.node("/example").to.be.dateType();
+                node.node("/example").to.be.date.of(LocalDate.of(2026, 3, 9));
+            });
+        });
+    }
 
-        System.out.println(jo);
+    @Test
+    public void testJsonDateTime() {
+        final String testJson = """
+                {
+                  "datetime_formats": [
+                    {
+                      "formatter": "DateTimeFormatter.ISO_LOCAL_DATE_TIME",
+                      "pattern": "yyyy-MM-dd'T'HH:mm:ss",
+                      "example": "2026-03-09T13:24:45"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ISO_OFFSET_DATE_TIME",
+                      "pattern": "yyyy-MM-dd'T'HH:mm:ssXXX",
+                      "example": "2026-03-09T13:24:45-04:00"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ISO_ZONED_DATE_TIME",
+                      "pattern": "yyyy-MM-dd'T'HH:mm:ssXXX'['VV']'",
+                      "example": "2026-03-09T13:24:45-04:00[America/New_York]"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ISO_DATE_TIME",
+                      "pattern": "ISO-8601 with optional offset/zone",
+                      "example": "2026-03-09T13:24:45.123-04:00"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.RFC_1123_DATE_TIME",
+                      "pattern": "EEE, d MMM yyyy HH:mm:ss z",
+                      "example": "Mon, 9 Mar 2026 13:24:45 GMT"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ofPattern(\\"MM/dd/yyyy HH:mm:ss\\")",
+                      "pattern": "MM/dd/yyyy HH:mm:ss",
+                      "example": "03/09/2026 13:24:45"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ofPattern(\\"M/d/yyyy H:mm:ss\\")",
+                      "pattern": "M/d/yyyy H:mm:ss",
+                      "example": "3/9/2026 13:24:45"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ofPattern(\\"yyyy-MM-dd HH:mm:ss\\")",
+                      "pattern": "yyyy-MM-dd HH:mm:ss",
+                      "example": "2026-03-09 13:24:45"
+                    }
+                  ]
+                }
+                """;
+
+        assertJson(testJson).expect(json -> {
+            json.nodes("/datetime_formats").stream().forEach(node -> {
+                node.node("/example").to.be.dateTimeType();
+                node.node("/example").to.be.dateTime.sameOrAfter(LocalDateTime.of(2026, 3, 9, 13, 24, 45));
+                node.node("/example").to.be.dateTime.before(LocalDateTime.of(2026, 3, 9, 13, 25));
+            });
+        });
+
+    }
+
+    @Test
+    public void testJsonTime() {
+        final String testJson = """
+                {
+                  "time_formats": [
+                    {
+                      "formatter": "DateTimeFormatter.ISO_LOCAL_TIME",
+                      "pattern": "HH:mm:ss",
+                      "example": "13:25:30"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ISO_TIME",
+                      "pattern": "HH:mm:ssXXX",
+                      "example": "13:25:30-04:00"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ISO_OFFSET_TIME",
+                      "pattern": "HH:mm:ssXXX",
+                      "example": "13:25:30-04:00"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ofPattern(\\"HH:mm:ss\\")",
+                      "pattern": "HH:mm:ss",
+                      "example": "13:25:30"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ofPattern(\\"HH:mm\\")",
+                      "pattern": "HH:mm",
+                      "example": "13:25"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ofPattern(\\"h:mm a\\")",
+                      "pattern": "h:mm a",
+                      "example": "1:25 PM"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ofPattern(\\"h:mm:ss a\\")",
+                      "pattern": "h:mm:ss a",
+                      "example": "1:25:30 PM"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ofPattern(\\"H:mm:ss\\")",
+                      "pattern": "H:mm:ss",
+                      "example": "13:25:30"
+                    },
+                    {
+                      "formatter": "DateTimeFormatter.ofPattern(\\"H:mm\\")",
+                      "pattern": "H:mm",
+                      "example": "13:25"
+                    }
+                  ]
+                }
+                """;
+        assertJson(testJson).expect(json -> {
+            json.nodes("/time_formats").stream().forEach(node -> {
+                node.node("/example").to.be.timeType();
+                node.node("/example").to.be.time.sameOrAfter(LocalTime.of(13, 25));
+                node.node("/example").to.be.time.before(LocalTime.of(13, 26));
+            });
+        });
     }
 }
