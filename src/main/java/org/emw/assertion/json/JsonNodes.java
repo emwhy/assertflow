@@ -24,11 +24,13 @@ public sealed class JsonNodes extends JsonAssertion implements Iterable<JsonNode
     }
 
     public JsonNode first() {
-        return this.stream().toList().getFirst();
+        return this.stream().toList().get(0);
     }
 
     public JsonNode last() {
-        return this.stream().toList().getLast();
+        final List<JsonNode> list = this.stream().toList();
+        
+        return list.get(list.size() - 1);
     }
 
     @Override
