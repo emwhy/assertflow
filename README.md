@@ -116,6 +116,87 @@ This library contains Json specific assertion to ease the difficulty of assertin
  * **Fluency:** The code can remain fluent as the rest of the library.
  * **Easily Access data:** It uses Json pointer to access or exclude data.
 
+### Asserting Individual Node End-Point
+
+Individual node end-point can be accessed using Json pointer. Since each end-point
+may contain different data type, specific type must be specified to do the assertion.
+Before asserting, the data type is checked and throw AssertionError as needed.
+
+```java
+    assertJson(testJson).expect(json -> {
+        json.node("/university_system/name").to.caseInsensitively.be("global Tech Institute");
+        json.node("/university_system/name").to.be("Global Tech Institute");
+        json.node("/university_system/founded_year").to.be(1985);
+        json.node("/university_system/founded_year").to.not.be(198);
+        json.node("/university_system/end_year").to.be.nullValue();
+        json.node("/university_system/global_stats/international_ratio").to.be(0.22);
+
+        // String assertion.
+        json.node("/university_system/founded_year").to.not.be.stringType();
+        json.node("/university_system/name").to.be.string.endWith("Institute");
+        json.node("/university_system/name").to.be.string.contain("Tech");
+        json.node("/university_system/name").to.caseInsensitively.be.string.endWith("INSTITUTE");
+        json.node("/university_system/founded_year").to.not.be.stringType();
+        
+        // Number assertion.
+        json.node("/university_system/founded_year").to.be.numberType();
+        json.node("/university_system/founded_year").to.be.number.greaterThan(1970);
+    });
+
+```
+### Asserting for JSON Data
+Rather than dealing with individual node end-point, we can assert a chunk of JSON data. 
+```java
+
+    assertJson(testJson).expect(json -> {
+        json.to.findJson("""
+              {
+                "access": "24/7",
+                "type": "Library",
+                "floors": [
+                  { "level": 1, "section": "Reference" },
+                  { "level": 2, "section": "Quiet Study" }
+                ]
+              }
+        """);
+
+        // JSON data appears in different order, but it means the same, so this would
+        // still be found.
+        json.to.findJson("""
+              {
+                "floors": [
+                  { "level": 1, "section": "Reference" },
+                  { "level": 2, "section": "Quiet Study" }
+                ]
+                "type": "Library",
+                "access": "24/7",
+              }
+        """);
+    });
+
+```
+### Excluding Nodes
+Certain JSON data may never match up in assertion, such at timestamp value or randomly generated hash values. 
+Sometimes, that leads to complex assertion code to get around.
+
+In the assertion framework, we can simply exclude those specific nodes from assertion.
+```java
+    assertJson(testJson).expect(json -> {
+        // "access" node value can be anything and still match, because it is excluded.
+        json.to.excluding("/access").findJson("""
+              {
+                "access": "24/7999",
+                "type": "Library",
+                "floors": [
+                  { "level": 1, "section": "Reference" },
+                  { "level": 2, "section": "Quiet Study" }
+                ]
+              }
+        """);
+    });
+
+```
+
 ## Assertion Groups
 
 AssertionGroup allows grouping multiple assertions.
