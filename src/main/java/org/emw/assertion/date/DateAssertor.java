@@ -15,6 +15,7 @@ import java.time.LocalDate;
  * @see org.emw.assertion.bool.BooleanAssertor
  * @see org.emw.assertion.datetime.DateTimeAssertor
  * @see org.emw.assertion.time.TimeAssertor
+ * @see org.emw.assertion.json.JsonAssertor
  */
 public interface DateAssertor {
     default DateExpect expect(@NonNull Date actualDate) {

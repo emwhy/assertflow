@@ -15,6 +15,7 @@ import java.util.Collection;
  * @see org.emw.assertion.date.DateAssertor
  * @see org.emw.assertion.datetime.DateTimeAssertor
  * @see org.emw.assertion.time.TimeAssertor
+ * @see org.emw.assertion.json.JsonAssertor
  */
 public interface CollectionAssertor {
     default CollectionExpect expect(@Nullable Object @Nullable[] actual) {

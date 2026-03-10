@@ -9,13 +9,33 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Provides assertion methods for {@link Collection} objects.
+ * <p>
+ * This class supports standard collection assertions such as matching all elements
+ * or checking for containment, with additional support for case-insensitivity
+ * and order-independent comparisons.
+ */
 public class CollectionAssertionMethods extends AssertionMethods {
+    /**
+     * Accessor for specific state-based assertions (e.g., empty, null, size).
+     */
     public final CollectionBeAssertionMethods be;
 
     private final @Nullable Collection<?> actualCollection;
     private final boolean anyOrder;
     private CollectionAssertorHelper helper;
 
+    /**
+     * Constructs collection assertion methods with specified configuration.
+     *
+     * @param group the assertion group to track results
+     * @param labelForActual a descriptive label for the collection being tested
+     * @param actual the actual collection to assert against
+     * @param negated whether the assertion logic should be inverted
+     * @param ignoreCase whether string comparisons should ignore case
+     * @param anyOrder whether the order of elements should be ignored during matching
+     */
     CollectionAssertionMethods(@Nullable AssertionGroup group, @NonNull String labelForActual, @Nullable Collection<?> actual, boolean negated, boolean ignoreCase, boolean anyOrder) {
         super(group, labelForActual, negated, ignoreCase);
         this.actualCollection = actual;
@@ -24,82 +44,110 @@ public class CollectionAssertionMethods extends AssertionMethods {
         this.helper = new CollectionAssertorHelper(labelForActual, actual, negated, ignoreCase);
     }
 
-    public void be(Object... expected) {
-        this.be(Arrays.asList(expected));
+    /**
+     * Assert that the collection matches exactly the expected elements.
+     * @param expected varargs of expected elements
+     */
+    public void allMatch(Object... expected) {
+        this.allMatch(Arrays.asList(expected));
     }
 
-    public void be(Collection<?> expectedCollection) {
+    /**
+     * Assert that the collection matches exactly the elements in the expected collection.
+     * <p>
+     * If {@code anyOrder} is true, the elements are sorted before comparison.
+     * If {@code ignoreCase} is true, elements are converted to lowercase strings before comparison.
+     * @param expectedCollection the collection of expected elements
+     */
+    public void allMatch(Collection<?> expectedCollection) {
         if (this.anyOrder) {
-            assertCondition(helper.assertionErrorMessage("to be same (in any order) as " + helper.join(expectedCollection)), () -> {
+            assertCondition(() -> {
+                String message = helper.assertionErrorMessage("to all match (in any order) as " + helper.join(expectedCollection));
                 if (actualCollection == null) {
-                    return false;
+                    throw new AssertionError(message);
                 } else {
                     final List<String> testActualList = ignoreCase ? actualCollection.stream().map(o -> o == null ? "null" : o.toString().toLowerCase()).sorted().toList() : actualCollection.stream().map(o -> o == null ? "null" : o.toString()).sorted().toList();
                     final List<String> testedExpectedList = ignoreCase ? expectedCollection.stream().map(o -> o == null ? "null" : o.toString().toLowerCase()).sorted().toList() : expectedCollection.stream().map(o -> o == null ? "null" : o.toString()).sorted().toList();
 
+                    boolean match = true;
                     if (testActualList.size() != testedExpectedList.size()) {
-                        return negated;
+                        match = false;
                     } else {
                         for (int i = 0; i < testActualList.size(); i++) {
                             if (!testActualList.get(i).equals(testedExpectedList.get(i))) {
-                                return negated;
+                                match = false;
+                                break;
                             }
                         }
-                        return !negated;
+                    }
+
+                    if (negated == match) {
+                        throw new AssertionError(message);
                     }
                 }
             });
         } else {
-            assertCondition(helper.assertionErrorMessage("to be same as " + helper.join(expectedCollection)), () -> {
+            assertCondition(() -> {
+                String message = helper.assertionErrorMessage("to all match " + helper.join(expectedCollection));
                 if (actualCollection == null) {
-                    return false;
+                    throw new AssertionError(message);
                 } else {
                     final List<String> testActualList = ignoreCase ? actualCollection.stream().map(o -> o == null ? "null" : o.toString().toLowerCase()).toList() : actualCollection.stream().map(o -> o == null ? "null" : o.toString()).toList();
                     final List<String> testedExpectedList = ignoreCase ? expectedCollection.stream().map(o -> o == null ? "null" : o.toString().toLowerCase()).toList() : expectedCollection.stream().map(o -> o == null ? "null" : o.toString()).toList();
 
+                    boolean match = true;
                     if (testActualList.size() != testedExpectedList.size()) {
-                        return negated;
+                        match = false;
                     } else {
                         for (int i = 0; i < testActualList.size(); i++) {
                             if (!testActualList.get(i).equals(testedExpectedList.get(i))) {
-                                return negated;
+                                match = false;
+                                break;
                             }
                         }
-                        return !negated;
+                    }
+
+                    if (negated == match) {
+                        throw new AssertionError(message);
                     }
                 }
             });
         }
     }
 
-    public void haveSizeOf(int expectedSize) {
-        assertCondition(helper.assertionErrorMessage("to have size of " + expectedSize + ", but was " + (actualCollection == null ? "null collection" : actualCollection.size())), () -> {
-            if (actualCollection == null) {
-                return false;
-            } else {
-                return (actualCollection.size() == expectedSize) != negated;
-            }
-        });
+    /**
+     * Assert that the collection contains the specified elements.
+     * @param expected varargs of elements expected to be found
+     */
+    public void contain(Object... expected) {
+        this.contain(Arrays.asList(expected));
     }
 
-    public void have(Object... expected) {
-        this.have(Arrays.asList(expected));
-    }
+    /**
+     * Assert that the collection contains all elements in the expected collection.
+     * @param expectedCollection the collection of elements expected to be found
+     */
+    public void contain(Collection<?> expectedCollection) {
+        assertCondition(() -> {
+            final String message = helper.assertionErrorMessage("to have " + helper.join(expectedCollection));
 
-    public void have(Collection<?> expectedCollection) {
-        assertCondition(helper.assertionErrorMessage("to have " + helper.join(expectedCollection)), () -> {
             if (actualCollection == null) {
-                return false;
+                throw new AssertionError(message);
             } else {
                 final List<String> testActualList = ignoreCase ? actualCollection.stream().map(o -> o == null ? "null" : o.toString().toLowerCase()).toList() : actualCollection.stream().map(o -> o == null ? "null" : o.toString()).toList();
                 final List<String> testedExpectedList = ignoreCase ? expectedCollection.stream().map(o -> o == null ? "null" : o.toString().toLowerCase()).toList() : expectedCollection.stream().map(o -> o == null ? "null" : o.toString()).toList();
+                boolean allContained = true;
 
                 for (String expected : testedExpectedList) {
                     if (!testActualList.contains(expected)) {
-                        return negated;
+                        allContained = false;
+                        break;
                     }
                 }
-                return !negated;
+
+                if (negated == allContained) {
+                    throw new AssertionError(message);
+                }
             }
         });
     }

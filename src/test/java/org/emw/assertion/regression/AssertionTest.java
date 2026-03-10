@@ -9,7 +9,6 @@ import org.testng.annotations.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 public class AssertionTest implements Assertor {
     @Test
@@ -93,24 +92,24 @@ public class AssertionTest implements Assertor {
         final String[] emptyArray = new String[0];
         final String[] nullArray = null;
 
-        expect("Test 1", new String[] { "test1", "test2" }).to.be("test1", "test2");
-        expect("Test 2", new String[] { "test1", "test2" }).to.inAnyOrder.be("test2", "test1");
-        expect("Test 3", new String[] { "test1", "test2" }).to.have("test2", "test1");
-        expect("Test 4", new String[] { "test1", "test2" }).to.caseInsensitively.be("Test1", "test2");
-        expect("Test 5", new String[] { "test1", "test2" }).to.caseInsensitively.inAnyOrder.be("Test2", "test1");
-        expect("Test 6", new String[] { "test1", "test2" }).to.caseInsensitively.have("Test2");
-        expect("Test 7", new String[] { "test1", "test2" }).to.haveSizeOf(2);
+        expect("Test 1", new String[] { "test1", "test2" }).to.allMatch("test1", "test2");
+        expect("Test 2", new String[] { "test1", "test2" }).to.inAnyOrder.allMatch("test2", "test1");
+        expect("Test 3", new String[] { "test1", "test2" }).to.contain("test2", "test1");
+        expect("Test 4", new String[] { "test1", "test2" }).to.caseInsensitively.allMatch("Test1", "test2");
+        expect("Test 5", new String[] { "test1", "test2" }).to.caseInsensitively.inAnyOrder.allMatch("Test2", "test1");
+        expect("Test 6", new String[] { "test1", "test2" }).to.caseInsensitively.contain("Test2");
+        expect("Test 7", new String[] { "test1", "test2" }).to.be.sizeOf(2);
         expect("Test 8", emptyArray).to.be.empty();
         expect("Test 9", nullArray).to.be.nullValue();
         expect("Test 10", new String[] { "test1", "test2" }).to.not.be.empty();
         expect("Test 11", emptyArray).to.not.be.nullValue();
 
-        expectError(() -> expect("Test 12", new String[] { "test1", "test2" }).to.be("Test1", "test2"), "Expected actual value('test1', 'test2') of 'Test 12' to be same as 'Test1', 'test2'.");
-        expectError(() -> expect("Test 13", new String[] { "test1", "test2" }).to.not.be("test1", "test2"), "Expected actual value('test1', 'test2') of 'Test 13' not to be same as 'test1', 'test2'.");
-        expectError(() -> expect("Test 14", new String[] { "test1", "test2" }).to.inAnyOrder.be("Test2", "test1"), "Expected actual value('test1', 'test2') of 'Test 14' to be same (in any order) as 'Test2', 'test1'.");
-        expectError(() -> expect("Test 15", new String[] { "test1", "test2" }).to.have("Test2"), "Expected actual value('test1', 'test2') of 'Test 15' to have 'Test2'.");
-        expectError(() -> expect("Test 16", new String[] { "test1", "test2" }).to.have("test1", "test2", "test3"), "Expected actual value('test1', 'test2') of 'Test 16' to have 'test1', 'test2', 'test3'.");
-        expectError(() -> expect("Test 17", new String[] { "test1", "test2" }).to.haveSizeOf(1), "Expected actual value('test1', 'test2') of 'Test 17' to have size of 1, but was 2.");
+        expectError(() -> expect("Test 12", new String[] { "test1", "test2" }).to.allMatch("Test1", "test2"), "Expected actual value('test1', 'test2') of 'Test 12' to all match 'Test1', 'test2'.");
+        expectError(() -> expect("Test 13", new String[] { "test1", "test2" }).to.not.allMatch("test1", "test2"), "Expected actual value('test1', 'test2') of 'Test 13' not to all match 'test1', 'test2'.");
+        expectError(() -> expect("Test 14", new String[] { "test1", "test2" }).to.inAnyOrder.allMatch("Test2", "test1"), "Expected actual value('test1', 'test2') of 'Test 14' to all match (in any order) as 'Test2', 'test1'.");
+        expectError(() -> expect("Test 15", new String[] { "test1", "test2" }).to.contain("Test2"), "Expected actual value('test1', 'test2') of 'Test 15' to have 'Test2'.");
+        expectError(() -> expect("Test 16", new String[] { "test1", "test2" }).to.contain("test1", "test2", "test3"), "Expected actual value('test1', 'test2') of 'Test 16' to have 'test1', 'test2', 'test3'.");
+        expectError(() -> expect("Test 17", new String[] { "test1", "test2" }).to.be.sizeOf(1), "Expected actual value('test1', 'test2') of 'Test 17' to have size of 1, but was 2.");
         expectError(() -> expect("Test 18", new String[] { "test1", "test2" }).to.be.empty(), "Expected actual value('test1', 'test2') of 'Test 18' to be empty.");
         expectError(() -> expect("Test 19", new String[] { "test1", "test2" }).to.be.nullValue(), "Expected actual value('test1', 'test2') of 'Test 19' to be null.");
     }

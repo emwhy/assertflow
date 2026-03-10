@@ -5,16 +5,19 @@ emw-Assertion is a library that provides fluent assertions, inspired by Chai (Ja
 ## Highlights
 
 - Fluent, English-like assertion structure with "expect ... to ..." BDD style format.
-- Supports assertions with string, numeric values and classes, collections, array, date objects (SQL Date and LocalDate), date/time object (LocalDateTime), and Time (LocalTime).
+- Fluent Json assertion.
 - Assertion grouping.
+- Supports assertions with string, numeric values and classes, collections, array, date objects (SQL Date and LocalDate), date/time object (LocalDateTime), and Time (LocalTime).
 
 ## Contents
 
   * [Fluent Assertions](#fluent-assertions)
+  * [Json Assertion](#json-assertion)
   * [Assertion Groups](#assertion-groups)
   * [Setting Up emw-Assertion](#setting-up-emw-assertion)
   * [Implementing emw-Assertion](#implementing-emw-assertion)
   * [Finally...](#finally)
+
 
 ## Fluent Assertions
 
@@ -95,6 +98,102 @@ As you can see in these examples, it is written in very fluent manner. It's easy
     expect("Test 9", testTime).to.be.sameOrAfter(LocalTime.of(10, 0, 0));
     expect("Test 10", testTime).to.be.sameOrBefore(LocalTime.of(11, 0, 0));
     expect("Test 11", testTime).to.be.sameOrBefore(LocalTime.of(12, 0, 0));
+
+```
+
+## Json Assertion
+
+Json content often needs assertion particularly in API tests. But asserting Json content can be
+difficult and cumbersome because flexibility of Json format. 
+
+This library contains Json specific assertion to ease the difficulty of asserting a Json content.
+
+### Feature Highlights
+
+ * **Json-to-Json equality:** Even if Json data have named data in different orders, it would still recognize them as the same, as long as the content are the same.
+ * **Excluding nodes:** Sometimes, everything should match except for a portion of Json (i.e., timestamp). A specific node can be excluded from the assertion.
+ * **Data flexibility:** Assertion can be done on a Json data chunk, or individual data.
+ * **Fluency:** The code can remain fluent as the rest of the library.
+ * **Easily Access data:** It uses Json pointer to access or exclude data.
+
+### Asserting Individual Node End-Point
+
+Individual node end-point can be accessed using Json pointer. Since each end-point
+may contain different data type, specific type must be specified to do the assertion.
+Before asserting, the data type is checked and throw AssertionError as needed.
+
+```java
+    assertJson(testJson).expect(json -> {
+        json.node("/university_system/name").to.caseInsensitively.be("global Tech Institute");
+        json.node("/university_system/name").to.be("Global Tech Institute");
+        json.node("/university_system/founded_year").to.be(1985);
+        json.node("/university_system/founded_year").to.not.be(198);
+        json.node("/university_system/end_year").to.be.nullValue();
+        json.node("/university_system/global_stats/international_ratio").to.be(0.22);
+
+        // String assertion.
+        json.node("/university_system/founded_year").to.not.be.stringType();
+        json.node("/university_system/name").to.be.string.endWith("Institute");
+        json.node("/university_system/name").to.be.string.contain("Tech");
+        json.node("/university_system/name").to.caseInsensitively.be.string.endWith("INSTITUTE");
+        json.node("/university_system/founded_year").to.not.be.stringType();
+        
+        // Number assertion.
+        json.node("/university_system/founded_year").to.be.numberType();
+        json.node("/university_system/founded_year").to.be.number.greaterThan(1970);
+    });
+
+```
+### Asserting for JSON Data
+Rather than dealing with individual node end-point, we can assert a chunk of JSON data. 
+```java
+
+    assertJson(testJson).expect(json -> {
+        json.to.findJson("""
+              {
+                "access": "24/7",
+                "type": "Library",
+                "floors": [
+                  { "level": 1, "section": "Reference" },
+                  { "level": 2, "section": "Quiet Study" }
+                ]
+              }
+        """);
+
+        // JSON data appears in different order, but it means the same, so this would
+        // still be found.
+        json.to.findJson("""
+              {
+                "floors": [
+                  { "level": 1, "section": "Reference" },
+                  { "level": 2, "section": "Quiet Study" }
+                ]
+                "type": "Library",
+                "access": "24/7",
+              }
+        """);
+    });
+
+```
+### Excluding Nodes
+Certain JSON data may never match up in assertion, such at timestamp value or randomly generated hash values. 
+Sometimes, that leads to complex assertion code to get around.
+
+In the assertion framework, we can simply exclude those specific nodes from assertion.
+```java
+    assertJson(testJson).expect(json -> {
+        // "access" node value can be anything and still match, because it is excluded.
+        json.to.excluding("/access").findJson("""
+              {
+                "access": "24/7999",
+                "type": "Library",
+                "floors": [
+                  { "level": 1, "section": "Reference" },
+                  { "level": 2, "section": "Quiet Study" }
+                ]
+              }
+        """);
+    });
 
 ```
 
@@ -197,9 +296,11 @@ If you have other favorite assertion solutions, you can also use that in conjunc
 - Download the latest **emw-assertion-release.jar** file from https://github.com/emwhy/assertion/releases/. The javadoc for the framework is packaged in  ***emw-assertion-release-javadoc.jar***. When configured, the documentation can be shown right from IDE (such as IntelliJ).
 - Move the file to appropriate location in a project directory (i.e., ./lib).
 - Add **emw-assertion-release.jar** to the Gradle dependency.
+- Add dependency to ***json-java*** package.
 ```
 dependencies {
     implementation(files("lib/emw-assertion-release.jar"));
+    implementation("org.json:json:20251224")
 }
 ```
 - Reload your Gradle. You should now be able to use emw-Assertion classes.
