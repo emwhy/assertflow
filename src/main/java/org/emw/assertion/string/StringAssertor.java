@@ -2,6 +2,7 @@ package org.emw.assertion.string;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.emw.assertion.json.JsonAssertor;
 
 /**
  * A list of <strong>expect</strong> assertion methods for string values.
@@ -12,6 +13,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @see org.emw.assertion.date.DateAssertor
  * @see org.emw.assertion.datetime.DateTimeAssertor
  * @see org.emw.assertion.time.TimeAssertor
+ * @see org.emw.assertion.json.JsonAssertor
  */
 public interface StringAssertor {
     default StringExpect expect(@Nullable String actual) {

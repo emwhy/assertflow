@@ -36,6 +36,7 @@ import org.emw.assertion.time.TimeAssertor;
  * @see AssertionGroup
  * @see DateTimeAssertor
  * @see TimeAssertor
+ * @see JsonAssertor
  */
 public interface Assertor extends StringAssertor, CollectionAssertor, BooleanAssertor, DateAssertor, NumberAssertor, DateTimeAssertor, TimeAssertor, JsonAssertor {
     default void assertionGroup(AssertionGroup.@NonNull GroupAction action) {

@@ -21,6 +21,9 @@ public sealed class JsonNodeAssertionMethods extends JsonAssertionMethods permit
         this.be.setThrowable(throwable);
     }
 
+    /**
+     * Assert that the selected JSON node exists.
+     */
     public void exist() {
         if (negated) {
             if (throwable() == null) {
@@ -39,6 +42,11 @@ public sealed class JsonNodeAssertionMethods extends JsonAssertionMethods permit
         }
     }
 
+    /**
+     * Assert for the exact match, other than described by modifiers (not, caseInsensitively, excluding). It can be JSON
+     * content or endpoint values (string, number, etc.).
+     * @param expected expected data
+     */
     public void be(@NonNull Object expected) {
         assertCondition(() -> {
             final Object expectedObject = expected instanceof String && JsonHelper.isJson((String) expected) ? new JSONObject((String) expected) : expected;
@@ -49,7 +57,7 @@ public sealed class JsonNodeAssertionMethods extends JsonAssertionMethods permit
 
                 if (negated) {
                     if (errorMessage.isEmpty()) {
-                        throw new AssertionError("Expected Json to not match, but they match.");
+                        throw new AssertionError("Expected JSON to not match, but they match.");
                     }
                 } else {
                     if (!errorMessage.isEmpty()) {
@@ -74,32 +82,47 @@ public sealed class JsonNodeAssertionMethods extends JsonAssertionMethods permit
         });
     }
 
-    public void containJson(@NonNull String containedJsonText) {
-        if (JsonHelper.isJson(containedJsonText)) {
-            containJson(new JSONObject(containedJsonText));
-        } else if (JsonHelper.isJsonArray(containedJsonText)) {
-            containJson(new JSONArray(containedJsonText));
+    /**
+     * Assert that JSON segment can be found somewhere within the current JSON context. The expected JSON does not need to be
+     * a direct child node of the JSON context.
+     * @param jsonToBeFoundText JSON string to be found
+     */
+    public void findJson(@NonNull String jsonToBeFoundText) {
+        if (JsonHelper.isJson(jsonToBeFoundText)) {
+            findJson(new JSONObject(jsonToBeFoundText));
+        } else if (JsonHelper.isJsonArray(jsonToBeFoundText)) {
+            findJson(new JSONArray(jsonToBeFoundText));
         } else {
-            throw new AssertionError("Not Json.");
+            throw new AssertionError("Not JSON.");
         }
     }
 
-    public void containJson(@NonNull JSONObject containedJson) {
+    /**
+     * Assert that JSON segment can be found somewhere within the current JSON context. The expected JSON does not need to be
+     * a direct child node of the JSON context.
+     * @param jsonObjectToBeFound JSONObject to be found
+     */
+    public void findJson(@NonNull JSONObject jsonObjectToBeFound) {
         assertCondition(() -> {
             final Object object = this.object();
 
-            if (JsonHelper.findJson(object, containedJson, this.excludedNodes(), this.ignoreCase) == negated) {
-                throw new AssertionError("Expected the actual Json data to contain the expected Json data.");
+            if (JsonHelper.findJson(object, jsonObjectToBeFound, this.excludedNodes(), this.ignoreCase) == negated) {
+                throw new AssertionError("Expected the actual JSON data to contain the expected JSON data.");
             }
         });
     }
 
-    public void containJson(@NonNull JSONArray containedJson) {
+    /**
+     * Assert that JSON segment can be found somewhere within the current JSON context. The expected JSON does not need to be
+     * a direct child node of the JSON context.
+     * @param jsonArrayToBeFound JSONArray to be found
+     */
+    public void findJson(@NonNull JSONArray jsonArrayToBeFound) {
         assertCondition(() -> {
             final Object object = this.object();
 
-            if (JsonHelper.findJson(object, containedJson, this.excludedNodes(), this.ignoreCase) == negated) {
-                throw new AssertionError("Expected the actual Json data to contain the expected Json data.");
+            if (JsonHelper.findJson(object, jsonArrayToBeFound, this.excludedNodes(), this.ignoreCase) == negated) {
+                throw new AssertionError("Expected the actual JSON data to contain the expected JSON data.");
             }
         });
     }

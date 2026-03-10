@@ -14,6 +14,7 @@ import java.time.LocalTime;
  * @see org.emw.assertion.bool.BooleanAssertor
  * @see org.emw.assertion.date.DateAssertor
  * @see org.emw.assertion.datetime.DateTimeAssertor
+ * @see org.emw.assertion.json.JsonAssertor
  */
 public interface TimeAssertor {
     default TimeExpect expect(@NonNull LocalTime actualLocalTime) {

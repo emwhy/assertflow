@@ -24,8 +24,9 @@ public sealed class JsonNodesAssertionMethods extends JsonAssertionMethods permi
         super.setThrowable(throwable);
         this.be.setThrowable(throwable);
     }
-
-
+    /**
+     * Assert that the current JSON node exists.
+     */
     public void exist() {
         if (negated) {
             if (throwable() == null) {
@@ -43,16 +44,28 @@ public sealed class JsonNodesAssertionMethods extends JsonAssertionMethods permi
             }
         }
     }
+
+    /**
+     * Assert that all elements in the JSON array match the expected array of objects.
+     * @param expectedArray varargs of expected objects
+     */
     public void allMatch(@NonNull Object... expectedArray) {
         allMatch(List.of(expectedArray));
     }
 
+    /**
+     * Assert that all elements in the JSON array match the expected collection.
+     * <p>
+     * Supports order-sensitive or any-order matching based on the {@code inAnyOrder} flag,
+     * and case-insensitive string comparison if {@code ignoreCase} is enabled.
+     * @param expectedCollection collection of expected objects
+     */
     public void allMatch(@NonNull Collection<?> expectedCollection) {
         assertCondition(() -> {
             final JSONArray jsonArray = jsonArray();
-            
+
             if (jsonArray.length() != expectedCollection.size()) {
-                throw new AssertionError("Expected Json array size does not match with the actual size.");
+                throw new AssertionError("Expected JSON array size does not match with the actual size.");
             } else if (this.inAnyOrder) {
                 final List<Object> expectedList = new ArrayList<>(expectedCollection).stream().map(JsonHelper::jsonMapper).sorted(new JsonHelper.JsonComparator()).toList();
 
@@ -75,12 +88,12 @@ public sealed class JsonNodesAssertionMethods extends JsonAssertionMethods permi
                         }
                     }
                     if (negated) {
-                        throw new AssertionError("Expected Json array to not match in any order, but it does.");
+                        throw new AssertionError("Expected JSON array to not match in any order, but it does.");
                     }
                 } else if (ignoreCase) {
-                    assertor.expect("Json Array", jsonArray.toList()).to.inAnyOrder.caseInsensitively.allMatch(expectedList);
+                    assertor.expect("JSON Array", jsonArray.toList()).to.inAnyOrder.caseInsensitively.allMatch(expectedList);
                 } else {
-                    assertor.expect("Json Array", jsonArray.toList()).to.inAnyOrder.allMatch(expectedList);
+                    assertor.expect("JSON Array", jsonArray.toList()).to.inAnyOrder.allMatch(expectedList);
                 }
             } else {
                 final List<Object> expectedList = expectedCollection.stream().map(JsonHelper::jsonMapper).toList();
@@ -100,18 +113,22 @@ public sealed class JsonNodesAssertionMethods extends JsonAssertionMethods permi
                         }
                     }
                     if (negated) {
-                        throw new AssertionError("Expected Json array to not match, but it does.");
+                        throw new AssertionError("Expected JSON array to not match, but it does.");
                     }
                 } else if (ignoreCase){
-                    assertor.expect("Json Array", jsonArray.toList()).to.caseInsensitively.allMatch(expectedList);
+                    assertor.expect("JSON Array", jsonArray.toList()).to.caseInsensitively.allMatch(expectedList);
                 } else {
-                    assertor.expect("Json Array", jsonArray.toList()).to.allMatch(expectedList);
+                    assertor.expect("JSON Array", jsonArray.toList()).to.allMatch(expectedList);
                 }
             }
         });
 
     }
 
+    /**
+     * Assert that the JSON array matches the provided JSON string.
+     * @param expected a JSON string representing a JSON array
+     */
     public void be(@NonNull String expected) {
         assertCondition(() -> {
             final Object expectedObject = JsonHelper.isJsonArray(expected) ? new JSONArray(expected) : expected;
@@ -122,7 +139,7 @@ public sealed class JsonNodesAssertionMethods extends JsonAssertionMethods permi
 
                 if (negated) {
                     if (errorMessage.isEmpty()) {
-                        throw new AssertionError("Expected Json to not match, but they match.");
+                        throw new AssertionError("Expected JSON to not match, but they match.");
                     }
                 } else {
                     if (!errorMessage.isEmpty()) {
@@ -131,46 +148,78 @@ public sealed class JsonNodesAssertionMethods extends JsonAssertionMethods permi
                 }
             } else {
                 if (!negated) {
-                    throw new AssertionError("Expected Json to match.");
+                    throw new AssertionError("Expected JSON to match.");
                 }
             }
         });
     }
 
+    /**
+     * Assert that expected JSON object is found within the actual JSON array.
+     * @param containedJsonText the JSON string
+     */
     public void findJson(@NonNull String containedJsonText) {
         if (JsonHelper.isJson(containedJsonText)) {
             findJson(new JSONObject(containedJsonText));
         } else if (JsonHelper.isJsonArray(containedJsonText)) {
             findJson(new JSONArray(containedJsonText));
         } else {
-            throw new AssertionError("Not Json.");
+            throw new AssertionError("Not JSON.");
         }
     }
 
+    /**
+     * Assert that expected JSON object is found within the actual JSON array.
+     * @param containedJson the {@link JSONObject} to find
+     */
     public void findJson(@NonNull JSONObject containedJson) {
         assertCondition(() -> {
             final JSONArray jsonArray = jsonArray();
 
-            if (JsonHelper.findJson(jsonArray, containedJson, this.excludedNodes(), this.ignoreCase) == negated) {
-                throw new AssertionError("Expected the actual Json data to contain the expected Json data.");
+            if (negated) {
+                if (JsonHelper.findJson(jsonArray, containedJson, this.excludedNodes(), this.ignoreCase)) {
+                    throw new AssertionError("Expected to not find JSON data within actual JSON data.");
+                }
+            } else {
+                if (!JsonHelper.findJson(jsonArray, containedJson, this.excludedNodes(), this.ignoreCase)) {
+                    throw new AssertionError("Expected to find JSON data within actual JSON data.");
+                }
             }
         });
     }
 
+    /**
+     * Assert that expected JSON array is found within the actual JSON array.
+     * @param containedJson the {@link JSONArray} to find
+     */
     public void findJson(@NonNull JSONArray containedJson) {
         assertCondition(() -> {
             final JSONArray jsonArray = jsonArray();
 
-            if (JsonHelper.findJson(jsonArray, containedJson, this.excludedNodes(), this.ignoreCase) == negated) {
-                throw new AssertionError("Expected the actual Json data to contain the expected Json data.");
+            if (negated) {
+                if (JsonHelper.findJson(jsonArray, containedJson, this.excludedNodes(), this.ignoreCase)) {
+                    throw new AssertionError("Expected to not find JSON data within actual JSON data.");
+                }
+            } else {
+                if (!JsonHelper.findJson(jsonArray, containedJson, this.excludedNodes(), this.ignoreCase)) {
+                    throw new AssertionError("Expected to find JSON data within actual JSON data.");
+                }
             }
         });
     }
 
+    /**
+     * Assert that the JSON array contains the specified objects.
+     * @param expectedArray varargs of objects expected to be present
+     */
     public void contain(@NonNull Object... expectedArray) {
         contain(List.of(expectedArray));
     }
 
+    /**
+     * Assert that the JSON array contains elements in the specified collection.
+     * @param expectedCollection collection of objects expected to be present
+     */
     public void contain(@NonNull Collection<?> expectedCollection) {
         assertCondition(() -> {
             final JSONArray jsonArray = jsonArray();
@@ -190,17 +239,17 @@ public sealed class JsonNodesAssertionMethods extends JsonAssertionMethods permi
 
                 if (negated) {
                     if (foundCount == expectedList.size()) {
-                        throw new AssertionError("Expected Json array to not have expected Json data, but it does.");
+                        throw new AssertionError("Expected JSON array to not have expected JSON data, but it does.");
                     }
                 } else {
                     if (foundCount != expectedList.size()) {
-                        throw new AssertionError("Expected Json array to have expected Json data, but it does not.");
+                        throw new AssertionError("Expected JSON array to have expected JSON data, but it does not.");
                     }
                 }
             } else if (ignoreCase){
-                assertor.expect("Json Array", jsonArray.toList()).to.caseInsensitively.contain(expectedList);
+                assertor.expect("JSON Array", jsonArray.toList()).to.caseInsensitively.contain(expectedList);
             } else {
-                assertor.expect("Json Array", jsonArray.toList()).to.contain(expectedList);
+                assertor.expect("JSON Array", jsonArray.toList()).to.contain(expectedList);
             }
         });
     }

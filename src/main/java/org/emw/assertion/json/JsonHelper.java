@@ -9,24 +9,48 @@ import org.json.JSONObject;
 import java.util.*;
 
 final class JsonHelper {
+    /**
+     * Check if the provided text is a JSON object.
+     * @param text the string to check
+     * @return {@code true} if the trimmed string starts with '{'
+     */
     static boolean isJson(@NonNull String text) {
         return text.trim().startsWith("{");
     }
 
+    /**
+     * Check if the provided text is a JSON array.
+     * @param text the string to check
+     * @return {@code true} if the trimmed string starts with '['
+     */
     static boolean isJsonArray(@NonNull String text) {
         return text.trim().startsWith("[");
     }
 
+    /**
+     * Identify the {@link JsonType} of the provided JSON text.
+     * @param jsonText the string to analyze
+     * @return {@link JsonType#Array} or {@link JsonType#Object}
+     * @throws JSONException if the text does not start with valid JSON delimiters
+     */
     static JsonType jsonType(@NonNull String jsonText) {
         if (jsonText.trim().startsWith("[")) {
             return JsonType.Array;
         } else if (jsonText.trim().startsWith("{")) {
             return JsonType.Object;
         } else {
-            throw new JSONException("Invalid Json text: " + jsonText);
+            throw new JSONException("Invalid JSON text: " + jsonText);
         }
     }
 
+    /**
+     * Search for a specific JSON structure within a larger JSON object or array.
+     * @param json the actual JSON object or array to search within
+     * @param expectedJson the JSON structure to find
+     * @param excludedNodes list of JSON pointers to ignore during the search
+     * @param ignoreCase whether to ignore case when comparing string values
+     * @return {@code true} if the expected JSON is found within the actual JSON
+     */
     static boolean findJson(@NonNull Object json, @NonNull Object expectedJson, List<String> excludedNodes, boolean ignoreCase) {
         final Map<String, Object> actual = getPointerValueMap(removeByJsonPointer(json, excludedNodes));
         final Object containedJson = removeByJsonPointer(expectedJson, excludedNodes);
@@ -41,6 +65,15 @@ final class JsonHelper {
         return false;
     }
 
+    /**
+     * Compare two JSON structures for equality, excluding specified nodes.
+     * @param json the actual JSON object or array
+     * @param expectedJson the expected JSON object or array
+     * @param excludedNodes list of JSON pointers to exclude from the comparison
+     * @param ignoreCase whether to ignore case during string value comparisons
+     * @return an empty string if they match, or a descriptive error message explaining the mismatch
+     * @throws AssertionError if the input parameters are not JSON objects or arrays
+     */
     static String matchJson(@NonNull Object json, @NonNull Object expectedJson, List<String> excludedNodes, boolean ignoreCase) {
         if ((json instanceof JSONObject || json instanceof JSONArray) && (expectedJson instanceof JSONObject || expectedJson instanceof JSONArray)) {
             final Map<String, Object> actual = getPointerValueMap(removeByJsonPointer(json, excludedNodes));
@@ -49,9 +82,9 @@ final class JsonHelper {
             validateExcludedJsonPointerFragments(json, excludedNodes);
 
             if (actual.size() > expected.size()) {
-                return "Expected Json size is smaller than the actual Json size.";
+                return "Expected JSON size is smaller than the actual JSON size.";
             } else if (actual.size() < expected.size()) {
-                return "Expected Json size is larger than the actual Json size.";
+                return "Expected JSON size is larger than the actual JSON size.";
             } else {
                 for (Map.Entry<String, Object> entry : actual.entrySet()) {
                     Object expectedValue = expected.get(entry.getKey());
@@ -75,20 +108,33 @@ final class JsonHelper {
         }
     }
 
+    /**
+     * Validate that all specified exclusion fragments exist within the JSON structure.
+     * @param obj the JSON object or array to validate against
+     * @param excludeJsonPointerFragments the fragments to look for
+     * @throws AssertionError if a fragment cannot be found or the object type is invalid
+     */
     private static void validateExcludedJsonPointerFragments(@NonNull Object obj, @NonNull List<String> excludeJsonPointerFragments) {
         if (obj instanceof JSONObject || obj instanceof JSONArray) {
             final Map<String, Object> map = getPointerValueMap(obj);
 
             for (String excludedJsonPointerFragment : excludeJsonPointerFragments) {
                 if (map.keySet().stream().noneMatch(key -> key.contains(excludedJsonPointerFragment))) {
-                    throw new AssertionError("Cannot find specified 'excluding' Json pointer node in asserted Json: " + excludedJsonPointerFragment);
+                    throw new AssertionError("Cannot find specified 'excluding' JSON pointer node in asserted JSON: '" + excludedJsonPointerFragment + "'");
                 }
             }
         } else {
             throw new AssertionError("Invalid parameter type.");
         }
     }
-
+    /**
+     * Removes nodes from a JSON object or array based on specified JSON pointer fragments.
+     *
+     * @param obj the JSON object or array to process
+     * @param excludeJsonPointerFragments the list of pointer fragments to exclude
+     * @return a new JSON structure with the specified nodes removed
+     * @throws AssertionError if the input type is not a JSONObject or JSONArray
+     */
     private static Object removeByJsonPointer(@NonNull Object obj, @NonNull List<String> excludeJsonPointerFragments) {
         if (obj instanceof JSONObject || obj instanceof JSONArray) {
             if (excludeJsonPointerFragments.isEmpty()) {
@@ -102,6 +148,15 @@ final class JsonHelper {
         }
     }
 
+    /**
+     * Recursively traverses the JSON structure to rebuild it while omitting paths
+     * that match the exclusion targets.
+     *
+     * @param current the current node being processed
+     * @param currentPath the accumulated JSON pointer path
+     * @param targets the list of path fragments to exclude
+     * @return the filtered JSON node
+     */
     private static Object removeByJsonPointerRecursively(Object current, String currentPath, List<String> targets) {
         if (current instanceof JSONObject originalObj) {
             final JSONObject newObj = new JSONObject();
@@ -145,6 +200,12 @@ final class JsonHelper {
         return current;
     }
 
+    /**
+     * Parses a JSON string and generates a map of all JSON pointers and their corresponding values.
+     *
+     * @param jsonText the JSON string to parse
+     * @return a sorted map of JSON pointer strings to node values
+     */
     static Map<String, Object> getPointerValueMap(String jsonText) {
         final Map<String, Object> results = new TreeMap<>();
         final String trimmed = jsonText.trim();
@@ -157,6 +218,12 @@ final class JsonHelper {
         return results;
     }
 
+    /**
+     * Generates a map of all JSON pointers and their corresponding values from a JSON object or array.
+     *
+     * @param obj the JSON object or array to process
+     * @return a sorted map of JSON pointer strings to node values
+     */
     static Map<String, Object> getPointerValueMap(@NonNull Object obj) {
         final Map<String, Object> results = new TreeMap<>();
 
@@ -164,6 +231,14 @@ final class JsonHelper {
         return results;
     }
 
+    /**
+     * Recursively collects all JSON pointers and their values into a map,
+     * following RFC 6901 escaping rules.
+     *
+     * @param node the current node
+     * @param pointer the current pointer path
+     * @param results the map to populate
+     */
     private static void collectPointers(Object node, String pointer, Map<String, Object> results) {
         final String currentPath = pointer.isEmpty() ? "/" : pointer;
 
@@ -184,6 +259,13 @@ final class JsonHelper {
         }
     }
 
+    /**
+     * Maps an object to its appropriate JSON representation (JSONObject, JSONArray, or primitive).
+     *
+     * @param obj the object to map
+     * @return the mapped JSON-compatible object
+     * @throws AssertionError if the object type is not supported
+     */
     static @NonNull Object jsonMapper(@Nullable Object obj) {
         if (obj == null) {
             return "";
@@ -203,11 +285,15 @@ final class JsonHelper {
         }
     }
 
+    /**
+     * A comparator for JSON nodes based on their string representation.
+     */
     static class JsonComparator implements Comparator<Object> {
         @Override
         public int compare(Object o1, Object o2) {
             return o1.toString().compareTo(o2.toString());
         }
     }
+
 
 }

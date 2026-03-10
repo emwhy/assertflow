@@ -10,6 +10,10 @@ public final class JsonNodesAssertion {
         this.json = json;
     }
 
+    /**
+     * Predicate that allows assertion to the JSON content.
+     * @param action predicate
+     */
     public void expect(JsonAssertionArrayAction action) {
         final JsonAssertionGroup group = new JsonAssertionGroup();
 
@@ -19,7 +23,7 @@ public final class JsonNodesAssertion {
             action.withJsonNodes(nodes);
         } finally {
             if (!group.throwables().isEmpty()) {
-                throw new AssertionGroupError("Json Assertion", group.throwables());
+                throw new AssertionGroupError("JSON Assertion", group.throwables());
             }
         }
     }

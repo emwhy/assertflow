@@ -122,7 +122,7 @@ public class JsonTest implements JsonAssertor {
             json.node("/university_system/name").to.caseInsensitively.be.string.contain("TECH");
             json.node("/university_system/founded_year").to.not.be.stringType();
             json.node("/university_system/founded_year").to.be.numberType();
-            json.node("/university_system/founded_year").to.be.number.moreThan(1970);
+            json.node("/university_system/founded_year").to.be.number.greaterThan(1970);
             json.node("/university_system/founded_year").to.be.number.lessThan(2000);
             json.node("/university_system/founded_year").to.be.number.between(1000, 2000);
             json.node("/university_system/founded_year").to.not.be.booleanType();
@@ -141,7 +141,7 @@ public class JsonTest implements JsonAssertor {
                     }
                 }
                 """);
-            json.to.containJson("""
+            json.to.findJson("""
                           {
                             "access": "24/7",
                             "type": "Library",
@@ -151,7 +151,7 @@ public class JsonTest implements JsonAssertor {
                             ]
                           }
                     """);
-            json.to.excluding("/access").containJson("""
+            json.to.excluding("/access").findJson("""
                           {
                             "access": "24/7999",
                             "type": "Library",

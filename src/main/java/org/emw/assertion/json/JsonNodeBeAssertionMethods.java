@@ -37,6 +37,9 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
         this.time = new JsonTimeAssertions(object);
     }
 
+    /**
+     * Assert that the JSON node contains a "null" value.
+     */
     public void nullValue() {
         assertCondition(() -> {
             final Object object = this.object();
@@ -51,6 +54,9 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
         });
     }
 
+    /**
+     * Assert that the JSON node contains a type of string.
+     */
     public void stringType() {
         assertCondition(() -> {
             final Object object = this.object();
@@ -65,6 +71,9 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
         });
     }
 
+    /**
+     * Assert that the JSON node contains a type of number.
+     */
     public void numberType() {
         assertCondition(() -> {
             final Object object = this.object();
@@ -79,6 +88,9 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
         });
     }
 
+    /**
+     * Assert that the JSON node contains a type of boolean.
+     */
     public void booleanType() {
         assertCondition(() -> {
             final Object object = this.object();
@@ -93,6 +105,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
         });
     }
 
+    /**
+     * Assert that the JSON node contains a type of date against typical formats. If the node is in a custom time format,
+     * use {@link #dateType(String)} to define the format.
+     */
     public void dateType() {
         assertCondition(() -> {
             final Object object = this.object();
@@ -109,6 +125,9 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
         });
     }
 
+    /**
+     * Assert that the JSON node contains a type of date against provided time format.
+     */
     public void dateType(@NonNull String format) {
         assertCondition(() -> {
             final Object object = this.object();
@@ -125,6 +144,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
         });
     }
 
+    /**
+     * Assert that the JSON node contains a type of date/time against typical formats. If the node is in a custom time format,
+     * use {@link #dateTimeType(String)} to define the format.
+     */
     public void dateTimeType() {
         assertCondition(() -> {
             final Object object = this.object();
@@ -141,6 +164,9 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
         });
     }
 
+    /**
+     * Assert that the JSON node contains a type of date/time against provided time format.
+     */
     public void dateTimeType(@NonNull String format) {
         assertCondition(() -> {
             final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
@@ -159,6 +185,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
         });
     }
 
+    /**
+     * Assert that the JSON node contains a type of time against typical formats. If the node is in a custom time format,
+     * use {@link #timeType(String)} to define the format.
+     */
     public void timeType() {
         assertCondition(() -> {
             final Object object = this.object();
@@ -175,6 +205,9 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
         });
     }
 
+    /**
+     * Assert that the JSON node contains a type of time against provided time format.
+     */
     public void timeType(@NonNull String format) {
         assertCondition(() -> {
             final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
@@ -192,6 +225,9 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
         });
     }
 
+    /**
+     * Inner class to handle string node assertions.
+     */
     public class JsonStringAssertions {
         private final @Nullable Object actual;
         private final JsonStringAssertor assertor = new JsonStringAssertor();
@@ -200,16 +236,23 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             this.actual = actual;
         }
 
+        /**
+         * Ensure that the object is of a string type, or throw error.
+         * @return a string value
+         */
         private String actualString() {
             final Object object = object();
 
             if (this.actual == null || !(object instanceof String)) {
-                throw new AssertionError("Node is not a string.");
+                throw new AssertionError("Expected node to be a string type.");
             } else {
                 return ((String) this.actual).trim();
             }
         }
 
+        /**
+         * Assert that the string node is empty.
+         */
         public void empty() {
             assertCondition(() -> {
                 final String actualString = this.actualString();
@@ -222,6 +265,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the string node starts with a string.
+         * @param startWith start with string
+         */
         public void startWith(String startWith) {
             assertCondition(() -> {
                 final String actualString = this.actualString();
@@ -242,6 +289,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the string node ends with a string.
+         * @param endWith end with string
+         */
         public void endWith(String endWith) {
             assertCondition(() -> {
                 final String actualString = this.actualString();
@@ -263,6 +314,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the string node contains a string.
+         * @param contained contained string
+         */
         public void contain(String contained) {
             assertCondition(() -> {
                 final String actualString = this.actualString();
@@ -283,6 +338,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the string node match with the regular expression pattern.
+         * @param matchPattern regular expression pattern
+         */
         public void match(String matchPattern) {
             assertCondition(() -> {
                 final String actualString = this.actualString();
@@ -304,6 +363,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the string node is one of strings in list.
+         * @param oneOfStrings a list of strings
+         */
         public void oneOf(String... oneOfStrings) {
             assertCondition(() -> {
                 final String actualString = this.actualString();
@@ -325,6 +388,9 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
         }
     }
 
+    /**
+     * Inner class to handle number node assertions.
+     */
     public class JsonNumberAssertions {
         private final @Nullable Object actual;
         private final JsonNumberAssertor assertor = new JsonNumberAssertor();
@@ -333,15 +399,23 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             this.actual = actual;
         }
 
+        /**
+         * Ensure that the object is of a number type, or throw error.
+         * @return a number value
+         */
         private Number actualNumber() {
             if (!(actual instanceof Number)) {
-                throw new AssertionError("Node is not a number.");
+                throw new AssertionError("Expected node to be a number type.");
             } else {
                 return (Number) actual;
             }
         }
 
-        public void moreThan(@NonNull Number expected) {
+        /**
+         * Assert that the number node is greater than a number.
+         * @param expected compared number
+         */
+        public void greaterThan(@NonNull Number expected) {
             assertCondition(() -> {
                 final Number actualNumber = this.actualNumber();
 
@@ -353,6 +427,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the number node is less than a number.
+         * @param expected compared number
+         */
         public void lessThan(@NonNull Number expected) {
             assertCondition(() -> {
                 final Number actualNumber = this.actualNumber();
@@ -365,7 +443,11 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
-        public void moreThanOrEqual(@NonNull Number expected) {
+        /**
+         * Assert that the number node is greater than or equals to a number.
+         * @param expected compared number
+         */
+        public void greaterThanOrEqual(@NonNull Number expected) {
             assertCondition(() -> {
                 final Number actualNumber = this.actualNumber();
 
@@ -376,6 +458,11 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
                 }
             });
         }
+
+        /**
+         * Assert that the number node is less than or equals to a number.
+         * @param expected compared number
+         */
 
         public void lessThanOrEqual(@NonNull Number expected) {
             assertCondition(() -> {
@@ -389,6 +476,11 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the number node is between numbers.
+         * @param expectedLower lower number, inclusive
+         * @param expectedUpper Upper number, inclusive
+         */
         public void between(@NonNull Number expectedLower, @NonNull Number expectedUpper) {
             assertCondition(() -> {
                 final Number actualNumber = this.actualNumber();
@@ -402,6 +494,9 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
         }
     }
 
+    /**
+     * Inner class to handle boolean node assertions.
+     */
     public class JsonBooleanAssertions {
         private final @Nullable Object actual;
         private final JsonBooleanAssertor assertor = new JsonBooleanAssertor();
@@ -410,16 +505,23 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             this.actual = actual;
         }
 
+        /**
+         * Ensure that the object is of a boolean type, or throw error.
+         * @return a boolean value
+         */
         private boolean actualBoolean() {
             if (String.valueOf(actual).equals("true")) {
                 return true;
             } else if (String.valueOf(actual).equals("false")) {
                 return false;
             } else {
-                throw new AssertionError("Node is not a boolean.");
+                throw new AssertionError("Expected node to be a boolean type.");
             }
         }
 
+        /**
+         * Assert that the boolean node is a true value.
+         */
         public void trueValue() {
             assertCondition(() -> {
                 if (negated) {
@@ -431,6 +533,9 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
         }
     }
 
+    /**
+     * Inner class to handle date node assertions.
+     */
     public class JsonDateAssertions {
         private static final DateTimeFormatter[] DATE_FORMATTERS = new DateTimeFormatter[] {
                 DateTimeFormatter.BASIC_ISO_DATE,
@@ -459,30 +564,68 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             this.definedFormat = definedFormat;
         }
 
+        /**
+         * Specify a date time format to use.
+         * @param definedFormat DateTimeFormatter to be used
+         * @return itself
+         */
+        public JsonDateAssertions with(DateTimeFormatter definedFormat) {
+            return new JsonDateAssertions(this.actual, definedFormat);
+        }
+
+        /**
+         * Assert that the date node is the same as a date.
+         * @param date a SQL date value
+         */
         public void of(@NonNull Date date) {
             this.of(date.toLocalDate());
         }
 
+        /**
+         * Assert that the date node is before a date.
+         * @param date a SQL date value
+         */
         public void before(@NonNull Date date) {
             this.before(date.toLocalDate());
         }
 
+        /**
+         * Assert that the date node is after a date.
+         * @param date a SQL date value
+         */
         public void after(@NonNull Date date) {
             this.after(date.toLocalDate());
         }
 
+        /**
+         * Assert that the date node is the same or before a date.
+         * @param date a SQL date value
+         */
         public void sameOrBefore(@NonNull Date date) {
             this.sameOrBefore(date.toLocalDate());
         }
 
+        /**
+         * Assert that the date node is the same or after a date.
+         * @param date a SQL date value
+         */
         public void sameOrAfter(@NonNull Date date) {
             this.sameOrAfter(date.toLocalDate());
         }
 
-        public void between(@NonNull Date date1, @NonNull Date date2) {
-            this.between(date1.toLocalDate(), date2.toLocalDate());
+        /**
+         * Assert that the date node is between dates.
+         * @param lowerDate lower SQL date, inclusive
+         * @param upperDate upper SQL date, inclusive
+         */
+        public void between(@NonNull Date lowerDate, @NonNull Date upperDate) {
+            this.between(lowerDate.toLocalDate(), upperDate.toLocalDate());
         }
 
+        /**
+         * Assert that the date node is the same as a date.
+         * @param expectedDate a local date
+         */
         public void of(@NonNull LocalDate expectedDate) {
             assertCondition(() -> {
                 if (negated) {
@@ -493,7 +636,9 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
-
+        /**
+         * Assert that the date node is the current date.
+         */
         public void today() {
             assertCondition(() -> {
                 if (negated) {
@@ -504,6 +649,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is of a specified year.
+         * @param year a year
+         */
         public void year(int year) {
             assertCondition(() -> {
                 if (negated) {
@@ -514,6 +663,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is the same date as the provided date time.
+         * @param expected a local date time
+         */
         public void sameDateAs(@NonNull LocalDateTime expected) {
             assertCondition(() -> {
                 if (negated) {
@@ -524,6 +677,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is before a date.
+         * @param expected a local date
+         */
         public void before(@NonNull LocalDate expected) {
             assertCondition(() -> {
                 if (negated) {
@@ -534,6 +691,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is after a date.
+         * @param expected a local date
+         */
         public void after(@NonNull LocalDate expected) {
             assertCondition(() -> {
                 if (negated) {
@@ -544,6 +705,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is the same or before a date.
+         * @param expected a local date
+         */
         public void sameOrBefore(@NonNull LocalDate expected) {
             assertCondition(() -> {
                 if (negated) {
@@ -554,6 +719,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is the same or after a date.
+         * @param expected a local date
+         */
         public void sameOrAfter(@NonNull LocalDate expected) {
             assertCondition(() -> {
                 if (negated) {
@@ -564,6 +733,11 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is between dates.
+         * @param start lower local date, inclusive
+         * @param end upper local date, inclusive
+         */
         public void between(@NonNull LocalDate start, @NonNull LocalDate end) {
             assertCondition(() -> {
                 if (negated) {
@@ -574,6 +748,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is within a specified number of days from today.
+         * @param days number of days
+         */
         public void withinDays(int days) {
             assertCondition(() -> {
                 if (negated) {
@@ -584,6 +762,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is within a specified number of past days from today.
+         * @param days number of days
+         */
         public void withinPastDays(int days) {
             assertCondition(() -> {
                 if (negated) {
@@ -594,6 +776,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is more than a specified number of days in the future.
+         * @param days number of days
+         */
         public void moreThanDaysInFuture(int days) {
             assertCondition(() -> {
                 if (negated) {
@@ -604,22 +790,30 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is more than a specified number of days in the past.
+         * @param days number of days
+         */
         public void moreThanDaysInPast(int days) {
             assertCondition(() -> {
                 if (negated) {
-                    assertor.expect("JsonNode Date", actualDate()).to.not.be.moreThanDaysInFuture(days);
+                    assertor.expect("JsonNode Date", actualDate()).to.not.be.moreThanDaysInPast(days);
                 } else {
-                    assertor.expect("JsonNode Date", actualDate()).to.be.moreThanDaysInFuture(days);
+                    assertor.expect("JsonNode Date", actualDate()).to.be.moreThanDaysInPast(days);
                 }
             });
         }
 
+        /**
+         * Ensure that the object is of a date type, or throw error.
+         * @return a date value
+         */
         private LocalDate actualDate() {
             if (actual instanceof String && definedFormat != null) {
                 try {
                     return LocalDate.parse(String.valueOf(actual), definedFormat);
                 } catch (DateTimeParseException e) {
-                    throw new AssertionError("Node does not match the defined date format.");
+                    throw new AssertionError("Expected node does not match the defined date format.");
                 }
             } else if (actual instanceof String) {
                 for (DateTimeFormatter formatter : DATE_FORMATTERS) {
@@ -633,6 +827,11 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             throw new AssertionError("Node is not in recognized date format.");
         }
 
+        /**
+         * Check if the tested object is a of a date type.
+         * @param tested tested object
+         * @return true if the object is a date
+         */
         private static boolean isDate(@NonNull Object tested) {
             if (tested instanceof String) {
                 for (DateTimeFormatter formatter : DATE_FORMATTERS) {
@@ -647,6 +846,12 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             return false;
         }
 
+        /**
+         * Check if the tested object is a of a date type based on the provided format.
+         * @param tested tested object
+         * @param formatter formatter
+         * @return true if the object is a date
+         */
         private static boolean isDate(@NonNull Object tested, DateTimeFormatter formatter) {
             if (tested instanceof String) {
                 try {
@@ -660,6 +865,9 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
         }
     }
 
+    /**
+     * Inner class to handle date/time node assertions.
+     */
     public class JsonDateTimeAssertions {
         private static final DateTimeFormatter[] DATE_TIME_FORMATTERS = new DateTimeFormatter[] {
                 DateTimeFormatter.ISO_LOCAL_DATE_TIME,
@@ -685,14 +893,35 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             this.definedFormat = definedFormat;
         }
 
+        /**
+         * Specify a date time format to use.
+         * @param definedFormat DateTimeFormatter to be used
+         * @return itself
+         */
+        public JsonDateTimeAssertions with(DateTimeFormatter definedFormat) {
+            return new JsonDateTimeAssertions(this.actual, definedFormat);
+        }
+
+        /**
+         * Assert that the date node is the same date as a date.
+         * @param date a SQL date value
+         */
         public void sameDateAs(@NonNull Date date) {
             this.sameDateAs(date.toLocalDate());
         }
 
+        /**
+         * Assert that the date node is the same date as a date time.
+         * @param localDateTime a local date time
+         */
         public void sameDateAs(@NonNull LocalDateTime localDateTime) {
             this.sameDateAs(localDateTime.toLocalDate());
         }
 
+        /**
+         * Assert that the date node is the same as a date time.
+         * @param expected a local date time
+         */
         public void of(@NonNull LocalDateTime expected) {
             assertCondition(() -> {
                 if (negated) {
@@ -703,16 +932,23 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is the current date and time.
+         */
         public void today() {
             assertCondition(() -> {
                 if (negated) {
-                    assertor.expect("JsonNode DaateTime", this.actualDateTime()).to.not.be.today();
+                    assertor.expect("JsonNode DateTime", this.actualDateTime()).to.not.be.today();
                 } else {
-                    assertor.expect("JsonNode DaateTime", this.actualDateTime()).to.be.today();
+                    assertor.expect("JsonNode DateTime", this.actualDateTime()).to.be.today();
                 }
             });
         }
 
+        /**
+         * Assert that the date node is of a specified year.
+         * @param year a year
+         */
         public void year(int year) {
             assertCondition(() -> {
                 if (negated) {
@@ -723,6 +959,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is the same date as a date.
+         * @param expected a local date
+         */
         public void sameDateAs(@NonNull LocalDate expected) {
             assertCondition(() -> {
                 if (negated) {
@@ -733,6 +973,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is before a date time.
+         * @param expected a local date time
+         */
         public void before(@NonNull LocalDateTime expected) {
             assertCondition(() -> {
                 if (negated) {
@@ -743,6 +987,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is after a date time.
+         * @param expected a local date time
+         */
         public void after(@NonNull LocalDateTime expected) {
             assertCondition(() -> {
                 if (negated) {
@@ -753,6 +1001,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is the same or before a date time.
+         * @param expected a local date time
+         */
         public void sameOrBefore(@NonNull LocalDateTime expected) {
             assertCondition(() -> {
                 if (negated) {
@@ -763,6 +1015,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is the same or after a date time.
+         * @param expected a local date time
+         */
         public void sameOrAfter(@NonNull LocalDateTime expected) {
             assertCondition(() -> {
                 if (negated) {
@@ -773,6 +1029,11 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is between date times.
+         * @param start lower local date time, inclusive
+         * @param end upper local date time, inclusive
+         */
         public void between(@NonNull LocalDateTime start, @NonNull LocalDateTime end) {
             assertCondition(() -> {
                 if (negated) {
@@ -783,6 +1044,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is within a specified number of days from now.
+         * @param days number of days
+         */
         public void withinDays(int days) {
             assertCondition(() -> {
                 if (negated) {
@@ -793,6 +1058,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is within a specified number of past days from now.
+         * @param days number of days
+         */
         public void withinPastDays(int days) {
             assertCondition(() -> {
                 if (negated) {
@@ -803,6 +1072,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is more than a specified number of days in the future.
+         * @param days number of days
+         */
         public void moreThanDaysInFuture(int days) {
             assertCondition(() -> {
                 if (negated) {
@@ -813,6 +1086,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is more than a specified number of days in the past.
+         * @param days number of days
+         */
         public void moreThanDaysInPast(int days) {
             assertCondition(() -> {
                 if (negated) {
@@ -823,16 +1100,24 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is within a specified number of hours from now.
+         * @param hours number of hours
+         */
         public void withinHours(int hours) {
             assertCondition(() -> {
                 if (negated) {
-                    assertor.expect("JsonNode Date", this.actualDateTime()).to.not.be.withinDays(hours);
+                    assertor.expect("JsonNode Date", this.actualDateTime()).to.not.be.withinHours(hours);
                 } else {
-                    assertor.expect("JsonNode Date", this.actualDateTime()).to.be.withinDays(hours);
+                    assertor.expect("JsonNode Date", this.actualDateTime()).to.be.withinHours(hours);
                 }
             });
         }
 
+        /**
+         * Assert that the date node is within a specified number of past hours from now.
+         * @param hours number of hours
+         */
         public void withinPastHours(int hours) {
             assertCondition(() -> {
                 if (negated) {
@@ -843,6 +1128,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is more than a specified number of hours in the future.
+         * @param hours number of hours
+         */
         public void moreThanHoursInFuture(int hours) {
             assertCondition(() -> {
                 if (negated) {
@@ -853,6 +1142,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the date node is more than a specified number of hours in the past.
+         * @param hours number of hours
+         */
         public void moreThanHoursInPast(int hours) {
             assertCondition(() -> {
                 if (negated) {
@@ -863,6 +1156,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Ensure that the object is of a date/time type, or throw error.
+         * @return a date/time value
+         */
         private LocalDateTime actualDateTime() {
             if (actual instanceof String && definedFormat != null) {
                 final String stringValue = String.valueOf(actual);
@@ -899,8 +1196,16 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             }
             throw new AssertionError("Node is not in a recognized date-time format.");
         }
-
-        public static boolean isDateTime(@NonNull Object tested) {
+        /**
+         * Check if the provided object is a string representing a valid date time.
+         * <p>
+         * This method attempts to parse the string against a predefined list of
+         * {@code DATE_TIME_FORMATTERS}.
+         *
+         * @param tested the object to check
+         * @return {@code true} if the object is a string and matches any supported date time format
+         */
+        private static boolean isDateTime(@NonNull Object tested) {
             if (tested instanceof String) {
                 for (DateTimeFormatter formatter : DATE_TIME_FORMATTERS) {
                     try {
@@ -915,7 +1220,14 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             return false;
         }
 
-        public static boolean isDateTime(@NonNull Object tested, DateTimeFormatter formatter) {
+        /**
+         * Check if the provided object is a string matching a specific date time format.
+         *
+         * @param tested the object to check
+         * @param formatter the specific {@link DateTimeFormatter} to use for validation
+         * @return {@code true} if the object is a string and matches the specified format
+         */
+        private static boolean isDateTime(@NonNull Object tested, DateTimeFormatter formatter) {
             if (tested instanceof String) {
                 try {
                     formatter.parse(String.valueOf(tested));
@@ -926,8 +1238,12 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             }
             return false;
         }
+
     }
 
+    /**
+     * Inner class to handle time node assertions.
+     */
     public class JsonTimeAssertions {
         private static final DateTimeFormatter[] TIME_FORMATTERS = new DateTimeFormatter[] {
                 DateTimeFormatter.ISO_LOCAL_TIME,      // 14:30:15
@@ -954,6 +1270,18 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             this.definedFormat = definedFormat;
         }
 
+        /**
+         * Specify a date time format to use.
+         * @param definedFormat DateTimeFormatter to be used
+         * @return itself
+         */
+        public JsonTimeAssertions with(DateTimeFormatter definedFormat) {
+            return new JsonTimeAssertions(this.actual, definedFormat);
+        }
+        /**
+         * Assert that the time node is the same as a specified time.
+         * @param expected a local time
+         */
         public void of(@NonNull LocalTime expected) {
             assertCondition(() -> {
                 if (negated) {
@@ -964,6 +1292,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the time node is before a specified time.
+         * @param expected a local time
+         */
         public void before(@NonNull LocalTime expected) {
             assertCondition(() -> {
                 if (negated) {
@@ -974,6 +1306,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the time node is after a specified time.
+         * @param expected a local time
+         */
         public void after(@NonNull LocalTime expected) {
             assertCondition(() -> {
                 if (negated) {
@@ -984,6 +1320,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the time node is the same or before a specified time.
+         * @param expected a local time
+         */
         public void sameOrBefore(@NonNull LocalTime expected) {
             assertCondition(() -> {
                 if (negated) {
@@ -994,6 +1334,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the time node is the same or after a specified time.
+         * @param expected a local time
+         */
         public void sameOrAfter(@NonNull LocalTime expected) {
             assertCondition(() -> {
                 if (negated) {
@@ -1004,6 +1348,11 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the time node is between specified times.
+         * @param start lower local time, inclusive
+         * @param end upper local time, inclusive
+         */
         public void between(@NonNull LocalTime start, @NonNull LocalTime end) {
             assertCondition(() -> {
                 if (negated) {
@@ -1014,6 +1363,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the time node is within a specified number of past hours from now.
+         * @param hours number of hours
+         */
         public void withinPastHours(int hours) {
             assertCondition(() -> {
                 if (negated) {
@@ -1024,6 +1377,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the time node is more than a specified number of hours in the future.
+         * @param hours number of hours
+         */
         public void moreThanHoursInFuture(int hours) {
             assertCondition(() -> {
                 if (negated) {
@@ -1034,6 +1391,10 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+        /**
+         * Assert that the time node is more than a specified number of hours in the past.
+         * @param hours number of hours
+         */
         public void moreThanHoursInPast(int hours) {
             assertCondition(() -> {
                 if (negated) {
@@ -1044,6 +1405,11 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             });
         }
 
+
+        /**
+         * Ensure that the object is of a time type, or throw error.
+         * @return a time value
+         */
         private LocalTime actualTime() {
             if (actual instanceof String && definedFormat != null) {
                 final String stringValue = String.valueOf(actual);
@@ -1073,7 +1439,16 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             throw new AssertionError("Node is not in a recognized time format.");
         }
 
-        public static boolean isTime(@NonNull Object tested) {
+        /**
+         * Check if the provided object is a string representing a valid time.
+         * <p>
+         * This method attempts to parse the string against a predefined list of
+         * {@code TIME_FORMATTERS}.
+         *
+         * @param tested the object to check
+         * @return {@code true} if the object is a string and matches any supported time format
+         */
+        private static boolean isTime(@NonNull Object tested) {
             if (tested instanceof String) {
                 for (DateTimeFormatter formatter : TIME_FORMATTERS) {
                     try {
@@ -1087,7 +1462,14 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             return false;
         }
 
-        public static boolean isTime(@NonNull Object tested, DateTimeFormatter formatter) {
+        /**
+         * Check if the provided object is a string matching a specific time format.
+         *
+         * @param tested the object to check
+         * @param formatter the specific {@link DateTimeFormatter} to use for validation
+         * @return {@code true} if the object is a string and matches the specified format
+         */
+        private static boolean isTime(@NonNull Object tested, DateTimeFormatter formatter) {
             if (tested instanceof String) {
                 try {
                     formatter.parse(String.valueOf(tested));
@@ -1098,7 +1480,12 @@ public class JsonNodeBeAssertionMethods extends JsonAssertionMethods {
             }
             return false;
         }
+
     }
+
+    /*
+        Expose the assertors of types.
+     */
 
     private class JsonStringAssertor implements StringAssertor {
     }

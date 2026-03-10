@@ -18,6 +18,12 @@ public sealed class JsonNode extends JsonAssertion permits ErroredJsonNode {
         this.to = new JsonNodeAllAssertionMethods(this.group, nodeObject, false, false, List.of());
     }
 
+    /**
+     * Get the JSON node.
+     *
+     * @param jsonPointer JSON pointer to the node
+     * @return JSON node object
+     */
     public JsonNode node(String jsonPointer) {
 
         try {
@@ -48,6 +54,12 @@ public sealed class JsonNode extends JsonAssertion permits ErroredJsonNode {
         }
     }
 
+    /**
+     * Get the JSON nodes.
+     *
+     * @param jsonPointer JSON pointer to the nodes
+     * @return JSON nodes object
+     */
     public JsonNodes nodes(String jsonPointer) {
         try {
             if (nodeObject instanceof JSONObject) {

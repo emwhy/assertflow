@@ -20,7 +20,7 @@ public final class JsonAssertionGroup {
             action.doAssertions(assertionGroup);
         } finally {
             if (!assertionGroup.throwables.isEmpty()) {
-                throw new AssertionGroupError("Json Assertion", assertionGroup.throwables);
+                throw new AssertionGroupError("JSON Assertion", assertionGroup.throwables);
             }
         }
     }

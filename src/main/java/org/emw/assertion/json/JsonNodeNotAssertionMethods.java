@@ -13,6 +13,11 @@ public final class JsonNodeNotAssertionMethods extends JsonNodeAssertionMethods 
         this.caseInsensitively = new JsonNodeAssertionMethods(group, obj, negated, true, excludedNodes);
     }
 
+    /**
+     * Exclude specified node from part of assertions.
+     * @param jsonPointer JSON pointer of node to be excluded
+     * @return itself
+     */
     public JsonNodeNotAssertionMethods excluding(@NonNull String jsonPointer) {
         this.addExcludedNode(jsonPointer);
         return this;
