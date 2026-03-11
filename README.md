@@ -132,12 +132,18 @@ Before asserting, the data type is checked and throw AssertionError as needed.
         json.node("/university_system/global_stats/international_ratio").to.be(0.22);
 
         // String assertion.
-        json.node("/university_system/founded_year").to.not.be.stringType();
-        json.node("/university_system/name").to.be.string.endWith("Institute");
-        json.node("/university_system/name").to.be.string.contain("Tech");
-        json.node("/university_system/name").to.caseInsensitively.be.string.endWith("INSTITUTE");
-        json.node("/university_system/founded_year").to.not.be.stringType();
-        
+        json.node("/university_system/name", nameNode -> {
+            // If doing multiple assertion to the same node, the actions can be
+            // grouped using predicate like this.
+            nameNode.to.not.be.string.empty();
+            nameNode.to.be.string.startWith("Global");
+            nameNode.to.be.string.endWith("Institute");
+            nameNode.to.be.string.contain("Tech");
+            nameNode.to.caseInsensitively.be.string.startWith("GLOBAL");
+            nameNode.to.caseInsensitively.be.string.endWith("INSTITUTE");
+            nameNode.to.caseInsensitively.be.string.contain("TECH");
+        });
+    
         // Number assertion.
         json.node("/university_system/founded_year").to.be.numberType();
         json.node("/university_system/founded_year").to.be.number.greaterThan(1970);

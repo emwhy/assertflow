@@ -113,13 +113,15 @@ public class JsonTest implements JsonAssertor {
             json.node("/university_system/founded_year").to.not.be.stringType();
             json.node("/university_system/end_year").to.be.nullValue();
             json.node("/university_system").to.not.be.stringType();
-            json.node("/university_system/name").to.not.be.string.empty();
-            json.node("/university_system/name").to.be.string.startWith("Global");
-            json.node("/university_system/name").to.be.string.endWith("Institute");
-            json.node("/university_system/name").to.be.string.contain("Tech");
-            json.node("/university_system/name").to.caseInsensitively.be.string.startWith("GLOBAL");
-            json.node("/university_system/name").to.caseInsensitively.be.string.endWith("INSTITUTE");
-            json.node("/university_system/name").to.caseInsensitively.be.string.contain("TECH");
+            json.node("/university_system/name", nameNode -> {
+                nameNode.to.not.be.string.empty();
+                nameNode.to.be.string.startWith("Global");
+                nameNode.to.be.string.endWith("Institute");
+                nameNode.to.be.string.contain("Tech");
+                nameNode.to.caseInsensitively.be.string.startWith("GLOBAL");
+                nameNode.to.caseInsensitively.be.string.endWith("INSTITUTE");
+                nameNode.to.caseInsensitively.be.string.contain("TECH");
+            });
             json.node("/university_system/founded_year").to.not.be.stringType();
             json.node("/university_system/founded_year").to.be.numberType();
             json.node("/university_system/founded_year").to.be.number.greaterThan(1970);
@@ -401,7 +403,7 @@ public class JsonTest implements JsonAssertor {
                 
                 """;
         assertJson(testJson).expect(json -> {
-            json.nodes("/date_formats").stream().forEach(node -> {
+            json.nodes("/date_formats").forEach(node -> {
                 node.node("/example").to.be.dateType();
                 node.node("/example").to.be.date.of(LocalDate.of(2026, 3, 9));
             });
