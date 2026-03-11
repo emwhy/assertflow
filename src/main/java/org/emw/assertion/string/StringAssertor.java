@@ -2,7 +2,6 @@ package org.emw.assertion.string;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.emw.assertion.json.JsonAssertor;
 
 /**
  * A list of <strong>expect</strong> assertion methods for string values.

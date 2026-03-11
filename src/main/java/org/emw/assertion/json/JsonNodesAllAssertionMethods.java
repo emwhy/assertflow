@@ -21,11 +21,11 @@ public final class JsonNodesAllAssertionMethods extends JsonNodesAssertionMethod
 
     /**
      * Exclude specified node from part of assertions.
-     * @param jsonPointer JSON pointer of node to be excluded
+     * @param jsonPointers JSON pointer of node to be excluded
      * @return itself
      */
-    public JsonNodesAllAssertionMethods excluding(@NonNull String jsonPointer) {
-        this.addExcludedNode(jsonPointer);
+    public JsonNodesAllAssertionMethods excluding(@NonNull String... jsonPointers) {
+        this.addExcludedNode(jsonPointers);
         return this;
     }
 

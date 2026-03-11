@@ -131,7 +131,7 @@ public class JsonTest implements JsonAssertor {
             json.node("/university_system/open").to.be.booleanType();
             json.node("/university_system/open").to.be.bool.trueValue();
             json.node("/university_system/global_stats/international_ratio").to.be(0.22);
-            json.node("/university_system").to.excluding("/campuses").excluding("/global_stats/total_students").excluding("end_year").be("""
+            json.node("/university_system").to.excluding("/campuses", "/global_stats/total_students", "end_year").be("""
                 {
                     "name": "Global Tech Institute",
                     "founded_year": 1985,
@@ -216,7 +216,7 @@ public class JsonTest implements JsonAssertor {
                     { "exam": "final", "score": 81 }
                 ]
                 """);
-            jsonNodes.to.excluding("/rooms").excluding("/numbers").allMatch("""
+            jsonNodes.to.excluding("/rooms", "/numbers").allMatch("""
                     {
                       "id": "ST-001",
                       "name": "Alice Smith",
@@ -240,7 +240,7 @@ public class JsonTest implements JsonAssertor {
             jsonNodes.first().nodes("/rooms").to.caseInsensitively.allMatch("ROOM1-1", "ROOM1-2", "ROOM1-3");
             jsonNodes.first().nodes("/rooms").to.inAnyOrder.allMatch("room1-2", "room1-3", "room1-1");
             jsonNodes.first().nodes("/numbers").to.allMatch(.4, 4, 8);
-            jsonNodes.to.inAnyOrder.excluding("/rooms").excluding("/numbers").allMatch("""
+            jsonNodes.to.inAnyOrder.excluding("/rooms", "/numbers").allMatch("""
                     {
                       "id": "ST-002",
                       "name": "Bob Johnson",
@@ -259,7 +259,7 @@ public class JsonTest implements JsonAssertor {
                       ]
                     }
                     """);
-            jsonNodes.to.excluding("/rooms").excluding("/numbers").not.allMatch("""
+            jsonNodes.to.excluding("/rooms", "/numbers").not.allMatch("""
                     {
                       "id": "ST-002",
                       "name": "Bob Johnson",
@@ -278,7 +278,7 @@ public class JsonTest implements JsonAssertor {
                       ]
                     }
                     """);
-            jsonNodes.to.excluding("/rooms").excluding("/numbers").contain("""
+            jsonNodes.to.excluding("/rooms", "/numbers").contain("""
                     {
                       "id": "ST-002",
                       "name": "Bob Johnson",
@@ -288,7 +288,7 @@ public class JsonTest implements JsonAssertor {
                       ]
                     }
                     """);
-            jsonNodes.to.excluding("/rooms").excluding("/numbers").contain("""
+            jsonNodes.to.excluding("/rooms", "/numbers").contain("""
                     {
                       "id": "ST-002",
                       "name": "Bob Johnson",
@@ -307,7 +307,7 @@ public class JsonTest implements JsonAssertor {
                       ]
                     }
                     """);
-            jsonNodes.to.excluding("/rooms").excluding("/numbers").not.contain("""
+            jsonNodes.to.excluding("/rooms", "/numbers").not.contain("""
                     {
                       "id": "ST-002",
                       "name": "Bob Johnson Test",

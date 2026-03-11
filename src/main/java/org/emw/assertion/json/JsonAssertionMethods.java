@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class JsonAssertionMethods extends JsonAssertion {
@@ -35,8 +36,8 @@ public abstract class JsonAssertionMethods extends JsonAssertion {
         this.throwable = throwable;
     }
 
-    protected void addExcludedNode(@NonNull String jsonPointer) {
-        this.excludedNodes.add(jsonPointer);
+    protected void addExcludedNode(@NonNull String... jsonPointers) {
+        this.excludedNodes.addAll(Arrays.stream(jsonPointers).toList());
     }
 
     protected List<String> excludedNodes() {
