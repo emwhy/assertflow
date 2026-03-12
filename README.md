@@ -1,5 +1,5 @@
 
-![](.\readme_files\assertflow.png)
+![](./readme_files/assertflow.png)
 
 AssertFlow is a library that provides fluent assertion syntax, inspired by Chai (JavaSCript library) in BDD style. It is for any project that require data validation, such as UI test automation, API test automation and unit testing.
 
