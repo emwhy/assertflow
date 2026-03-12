@@ -338,7 +338,11 @@ public class JsonTest implements JsonAssertor {
 
     @Test
     public void testJsonDate() {
-        final String testJson = """
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        final LocalDate now = LocalDate.now();
+        final LocalDate daysPastDate = now.minusDays(15);
+        final LocalDate daysFutureDate = now.plusDays(15);
+        final String testJson = String.format("""
                 {
                   "date_formats": [
                     {
@@ -401,14 +405,58 @@ public class JsonTest implements JsonAssertor {
                       "pattern": "M/d/yyyy",
                       "example": "3/9/2026"
                     }
-                  ]
+                  ],
+                  "relative_date": {
+                    "days_past": {
+                      "example": "%s"
+                    },
+                    "days_future": {
+                      "example": "%s"
+                    }
+                  }
                 }
                 
-                """;
+                """, daysPastDate.format(dateTimeFormatter), daysFutureDate.format(dateTimeFormatter));
         assertJson(testJson).expect(json -> {
             json.nodes("/date_formats").forEach(node -> {
                 node.node("/example").to.be.dateType();
                 node.node("/example").to.be.date.of(LocalDate.of(2026, 3, 9));
+                node.node("/example").to.be.date.before(LocalDate.of(2026, 3, 10));
+                node.node("/example").to.not.be.date.before(LocalDate.of(2026, 3, 9));
+                node.node("/example").to.be.date.after(LocalDate.of(2026, 3, 8));
+                node.node("/example").to.not.be.date.after(LocalDate.of(2026, 3, 9));
+                node.node("/example").to.be.date.sameOrBefore(LocalDate.of(2026, 3, 10));
+                node.node("/example").to.be.date.sameOrBefore(LocalDate.of(2026, 3, 9));
+                node.node("/example").to.be.date.sameOrAfter(LocalDate.of(2026, 3, 8));
+                node.node("/example").to.be.date.sameOrAfter(LocalDate.of(2026, 3, 9));
+                node.node("/example").to.be.date.between(LocalDate.of(2026, 3, 8), LocalDate.of(2026, 3, 10));
+            });
+            json.node("/relative_date", relativeDateTimeNode -> {
+                relativeDateTimeNode.node("/days_past/example", exampleNode -> {
+                    exampleNode.to.be.dateType();
+                    exampleNode.to.be.stringType();
+                    exampleNode.to.be.date.sameDateAs(daysPastDate.atTime(11, 4, 1));
+                    exampleNode.to.be.date.of(daysPastDate);
+                    exampleNode.to.be.date.withinPastDays(16);
+                    exampleNode.to.not.be.date.withinPastDays(14);
+                    exampleNode.to.not.be.date.withinDays(16);
+                    exampleNode.to.not.be.date.withinDays(14);
+                    exampleNode.to.be.date.moreThanDaysInPast(14);
+                    exampleNode.to.not.be.date.moreThanDaysInFuture(1);
+                });
+                relativeDateTimeNode.node("/days_future/example", exampleNode -> {
+                    exampleNode.to.be.dateType();
+                    exampleNode.to.be.stringType();
+                    exampleNode.to.be.date.sameDateAs(daysFutureDate.atTime(12, 5, 7));
+                    exampleNode.to.be.date.of(daysFutureDate);
+                    exampleNode.to.be.date.withinDays(16);
+                    exampleNode.to.not.be.date.withinDays(14);
+                    exampleNode.to.not.be.date.withinPastDays(16);
+                    exampleNode.to.not.be.date.withinPastDays(14);
+                    exampleNode.to.not.be.date.moreThanDaysInPast(14);
+                    exampleNode.to.not.be.date.moreThanDaysInFuture(16);
+                    exampleNode.to.be.date.moreThanDaysInFuture(14);
+                });
             });
         });
     }
