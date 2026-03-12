@@ -10,7 +10,7 @@
 
 AssertFlow is a library that provides fluent assertion syntax, inspired by Chai (JavaSCript library) in BDD style. It is for any project that require data validation, such as UI test automation, API test automation and unit testing.
 <p>
-As the name implies, the aim is to provide useful assertion options while maintaining the code fluidity. Code that are easily readable is less prone to mistake and simplify maintenance.
+    As the name implies, the aim is to provide useful assertion options while maintaining the code fluidity. Code that are easily readable is less prone to mistake and simplify maintenance.
 
 <h2>Highlights</h2>
 
@@ -26,7 +26,7 @@ As the name implies, the aim is to provide useful assertion options while mainta
 JSON content often needs assertion particularly in API tests. But asserting JSON content can be
 difficult and cumbersome because flexibility of JSON format.
 <p>
-This library contains JSON specific assertion to ease the difficulty of asserting a JSON content.
+    This library contains JSON specific assertion to ease the difficulty of asserting a JSON content.
 
 <h3>Feature Highlights</h3>
 
@@ -42,14 +42,14 @@ This library contains JSON specific assertion to ease the difficulty of assertin
 
 AssertionGroup allows grouping multiple assertions.
 <p>
-All assertions within a group are tested before throwing*AssertionGroupError**. If multiple assertion failed, all errors are returned in exception message.
+    All assertions within a group are tested before throwing <b>AssertionGroupError</b>. If multiple assertion failed, all errors are returned in exception message.
 <p>
-This is useful when multiple values need to be checked within the same context. It can save you from executing your tests multiple times to find out all the errors may exist in a context.
+    This is useful when multiple values need to be checked within the same context. It can save you from executing your tests multiple times to find out all the errors may exist in a context.
 
 <h2>Notable Classes</h2>
 <ul>
-    <li><b><a href="org/emw/assertion/Assertor.html">Assertor</a></b>: Interface to give access to all "expect" methods.</li>
-    <li><b><a href="org/emw/assertion/AssertionGroup.html">AssertionGroup</a></b>: Allows grouping multiple assertions.</li>
+    <li><b><a href="org/emw/assertflow/AssertFlow.html">AssertFlow</a></b>: Interface to give access to all assertion methods.</li>
+    <li><b><a href="org/emw/assertflow/AssertionGroup.html">AssertionGroup</a></b>: Allows grouping multiple assertions.</li>
 </ul>
 </body>
 
