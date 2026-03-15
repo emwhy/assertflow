@@ -3,7 +3,7 @@
 
 AssertFire is a library that provides fluent assertion syntax, inspired by Chai (JavaSCript library) in BDD style. It is for any project that require data validation, such as UI test automation, API test automation and unit testing.
 
-As the name implies, the aim is to provide useful assertion options while maintaining the code fluidity. Code that are easily readable is less prone to mistake and simplify maintenance.
+The aim is to provide useful assertion options while maintaining the code fluidity. Code that are easily readable is less prone to mistake and simplify maintenance.
 
 ## Highlights
 
